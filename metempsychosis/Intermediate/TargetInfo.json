@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "metempsychosis",
+			"Path": "..\\Source\\metempsychosis.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "metempsychosisEditor",
+			"Path": "..\\Source\\metempsychosisEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
