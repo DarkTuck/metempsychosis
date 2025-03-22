@@ -1,8 +1,0 @@
-{
-	"SourceFiles": [
-		"E:\\unrealProjekty\\metempsychosis\\metempsychosis\\Source\\metempsychosis\\metempsychosis.Build.cs",
-		"E:\\unrealProjekty\\metempsychosis\\metempsychosis\\Source\\metempsychosis.Target.cs",
-		"E:\\unrealProjekty\\metempsychosis\\metempsychosis\\Source\\metempsychosisEditor.Target.cs"
-	],
-	"EngineVersion": "5.5.4"
-}
