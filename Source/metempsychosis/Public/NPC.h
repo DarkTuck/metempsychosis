@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "PatrolPath.h"
+#include "TurnBaseCombatCharacterInterface.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "GameFramework/Character.h"
 #include "NPC.generated.h"
 
 UCLASS()
-class METEMPSYCHOSIS_API ANPC : public ACharacter
+class METEMPSYCHOSIS_API ANPC : public ACharacter, public ITurnBaseCombatCharacterInterface
 {
 	GENERATED_BODY()
 
