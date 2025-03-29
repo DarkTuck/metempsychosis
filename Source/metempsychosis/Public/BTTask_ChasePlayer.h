@@ -16,4 +16,7 @@ class METEMPSYCHOSIS_API UBTTask_ChasePlayer : public UBTTask_BlackboardBase
 public:
 	explicit UBTTask_ChasePlayer(FObjectInitializer const&ObjectInitializer);
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+private:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="AI",meta=(AllowPrivateAccess=true))
+	float TriggerFightDistance=10.f;
 };

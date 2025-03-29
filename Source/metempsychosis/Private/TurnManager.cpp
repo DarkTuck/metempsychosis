@@ -10,13 +10,13 @@ ATurnManager::ATurnManager(): CurrentCharacter(nullptr)
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-void ATurnManager::StartTurn(ITurnBaseCombatCharacterInterface* Character)
+void ATurnManager::StartTurn(UTurnCombatCharacter* Character)
 {
 	CurrentCharacter = Character;
 	CurrentCharacter->BeginTurn();
 }
 
-void ATurnManager::EndTurn()
+void ATurnManager::EndTurn() const
 {
 	if (CurrentCharacter)
 	{
