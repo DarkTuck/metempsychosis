@@ -37,6 +37,8 @@ protected:
 	int AttackPower=20;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
 	int ActionPoints=3;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
+	bool bIsFriendly=false;
 
 	void SpendActionPoints(int Amount);
 

@@ -3,6 +3,8 @@
 
 #include "TurnCombatCharacter.h"
 
+#include "TurnBaseCombat.h"
+
 // Sets default values for this component's properties
 UTurnCombatCharacter::UTurnCombatCharacter()
 {
@@ -43,12 +45,12 @@ void UTurnCombatCharacter::EndTurn()
 	//TODO
 }
 
-void UTurnCombatCharacter::TakeDamage(int DamageAmount)
+void UTurnCombatCharacter::TakeDamage(const int DamageAmount)
 {
 	Health -= DamageAmount;
 	if (Health <= 0)
 	{
-		//TODO
+		UTurnBaseCombat::AddCharacter(this,bIsFriendly);
 	}
 }
 
@@ -62,7 +64,7 @@ void UTurnCombatCharacter::Attack(UTurnCombatCharacter* Target)
 	}
 }
 
-void UTurnCombatCharacter::SpendActionPoints(int Amount)
+void UTurnCombatCharacter::SpendActionPoints(const int Amount)
 {
 	ActionPoints -= Amount;
 }

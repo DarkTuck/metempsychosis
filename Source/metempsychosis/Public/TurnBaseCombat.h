@@ -2,8 +2,10 @@
 
 #pragma once
 
+#include "TurnCombatCharacter.h"
 #include "CoreMinimal.h"
 #include "TurnBaseCombat.generated.h"
+
 
 /**
  * 
@@ -13,6 +15,17 @@ class METEMPSYCHOSIS_API UTurnBaseCombat : public UObject
 {
 	GENERATED_BODY()
 public:
+	UTurnBaseCombat();
 	static void StarCombat();
-	
+	static void CharacterDies(UObject* Character,bool bIsFriendly);
+	static void AddCharacter(UObject* Character,bool bIsFriendly);
+	static void NextCharacter(int8 currentIndex);
+	static void OrderCharacter();
+private:
+	static void EndCombat();
+	static UTurnCombatCharacter* CharactersOrder[6];
+	static TArray<UObject*> CombatCharactersFriendly;
+	static TArray<UObject*> CombatCharactersEnemy;
+	static int8 CurrentIndex;
+
 };

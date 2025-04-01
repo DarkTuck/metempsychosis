@@ -18,7 +18,7 @@ public:
 	ATurnManager();
 
 	void StartTurn(UTurnCombatCharacter* Character);
-	void EndTurn() const;
+	void EndTurn()const;
 
 protected:
 	// Called when the game starts or when spawned
