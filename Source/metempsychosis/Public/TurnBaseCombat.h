@@ -10,6 +10,7 @@
 /**
  * 
  */
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartCombat);
 UCLASS()
 class METEMPSYCHOSIS_API UTurnBaseCombat : public UObject
 {
@@ -19,9 +20,11 @@ public:
 	static void StarCombat();
 	static void CharacterDies(UObject* Character,bool bIsFriendly);
 	static void AddCharacter(UObject* Character,bool bIsFriendly);
-	static void NextCharacter(int8 currentIndex);
+	static UTurnCombatCharacter* NextCharacter(int8 currentIndex=-1);
 	static void OrderCharacter();
+	static  FOnStartCombat StartCombatDelegate;
 private:
+
 	static void EndCombat();
 	static UTurnCombatCharacter* CharactersOrder[6];
 	static TArray<UObject*> CombatCharactersFriendly;

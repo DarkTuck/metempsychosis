@@ -2,22 +2,21 @@
 
 
 #include "TurnBaseCombat.h"
-
 #include "TurnManager.h"
 
 TArray<UObject*> UTurnBaseCombat::CombatCharactersFriendly;
 TArray<UObject*> UTurnBaseCombat::CombatCharactersEnemy;
 int8 UTurnBaseCombat::CurrentIndex;
 UTurnCombatCharacter* UTurnBaseCombat::CharactersOrder[6];
+FOnStartCombat UTurnBaseCombat::StartCombatDelegate;
 
 UTurnBaseCombat::UTurnBaseCombat()
 {
-	
 }
 
 void UTurnBaseCombat::StarCombat()
 {
-	return GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, "Trigger Fight");
+	StartCombatDelegate.Broadcast();
 }
 
 void UTurnBaseCombat::CharacterDies(UObject* Character, const bool bIsFriendly)
@@ -48,11 +47,23 @@ void UTurnBaseCombat::AddCharacter(UObject* Character, const bool bIsFriendly)
 	CombatCharactersEnemy.Add(Character);
 }
 
-void UTurnBaseCombat::NextCharacter(int8 currentIndex)
+UTurnCombatCharacter* UTurnBaseCombat::NextCharacter(int8 currentIndex)
 {
-	currentIndex++;
-	CurrentIndex=currentIndex;
-	//ATurnManager->StartTurn(CharactersOrder[currentIndex]);
+	if (currentIndex==-1)
+	{
+		CurrentIndex++;
+	}
+	else
+	{
+		CurrentIndex=currentIndex;
+	}
+	//check if index isn't higher than array lenght
+	if (CurrentIndex >*(&CharactersOrder+1)-CharactersOrder)
+	{
+		//if is then reset index
+		CurrentIndex = 0;
+	}
+	return CharactersOrder[CurrentIndex];
 }
 
 void UTurnBaseCombat::OrderCharacter()
