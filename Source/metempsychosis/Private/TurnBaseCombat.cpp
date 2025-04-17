@@ -9,6 +9,7 @@ TArray<UObject*> UTurnBaseCombat::CombatCharactersEnemy;
 int8 UTurnBaseCombat::CurrentIndex;
 UTurnCombatCharacter* UTurnBaseCombat::CharactersOrder[6];
 FOnStartCombat UTurnBaseCombat::StartCombatDelegate;
+bool UTurnBaseCombat::bPlayerAdvantage;
 
 UTurnBaseCombat::UTurnBaseCombat()
 {
@@ -65,23 +66,69 @@ UTurnCombatCharacter* UTurnBaseCombat::NextCharacter(int8 currentIndex)
 	}
 	return CharactersOrder[CurrentIndex];
 }
-
+      
 void UTurnBaseCombat::OrderCharacter()
 {
-	for (int8 i=0;i<=6;i++)
+	const int8 friendlyCount = CombatCharactersFriendly.Num();
+	const int8 enemyCount = CombatCharactersEnemy.Num();
+	const int8 totalCharacters = friendlyCount + enemyCount;
+    
+	// Check character limit and if not over it
+	if (totalCharacters > MAX_CHARACTERS)
 	{
-		if (i<=3)
+		return;
+	}
+    
+	// Reset Order
+	for (int8 i = 0; i < MAX_CHARACTERS; i++)
+	{
+		CharactersOrder[i] = nullptr;
+	}
+    
+	int8 currentIndex = 0;
+    
+	if (bPlayerAdvantage)
+	{
+		// Add Friendly characters
+		for (int8 i = 0; i < friendlyCount; i++)
 		{
-			if (CombatCharactersFriendly[i]!=nullptr)
+			if (CombatCharactersFriendly[i] != nullptr)
 			{
-				CharactersOrder[i]=Cast<UTurnCombatCharacter>(CombatCharactersFriendly[i]);
-				return;
+				CharactersOrder[currentIndex] = Cast<UTurnCombatCharacter>(CombatCharactersFriendly[i]);
+				currentIndex++;
 			}
-			return;
 		}
-		if (CombatCharactersEnemy[i]!=nullptr)
+        
+		// Add Enemies
+		for (int8 i = 0; i < enemyCount; i++)
 		{
-			CharactersOrder[i]=Cast<UTurnCombatCharacter>(CombatCharactersEnemy[i]);
+			if (CombatCharactersEnemy[i] != nullptr)
+			{
+				CharactersOrder[currentIndex] = Cast<UTurnCombatCharacter>(CombatCharactersEnemy[i]);
+				currentIndex++;
+			}
+		}
+	}
+	else
+	{
+		// Add Enemies
+		for (int8 i = 0; i < enemyCount; i++)
+		{
+			if (CombatCharactersEnemy[i] != nullptr)
+			{
+				CharactersOrder[currentIndex] = Cast<UTurnCombatCharacter>(CombatCharactersEnemy[i]);
+				currentIndex++;
+			}
+		}
+        
+		// Add friendly
+		for (int8 i = 0; i < friendlyCount; i++)
+		{
+			if (CombatCharactersFriendly[i] != nullptr)
+			{
+				CharactersOrder[currentIndex] = Cast<UTurnCombatCharacter>(CombatCharactersFriendly[i]);
+				currentIndex++;
+			}
 		}
 	}
 }

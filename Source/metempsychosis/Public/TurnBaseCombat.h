@@ -23,6 +23,7 @@ public:
 	static UTurnCombatCharacter* NextCharacter(int8 currentIndex=-1);
 	static void OrderCharacter();
 	static  FOnStartCombat StartCombatDelegate;
+	static bool bPlayerAdvantage;
 private:
 
 	static void EndCombat();
@@ -30,5 +31,7 @@ private:
 	static TArray<UObject*> CombatCharactersFriendly;
 	static TArray<UObject*> CombatCharactersEnemy;
 	static int8 CurrentIndex;
+	// Max characters for the array
+	static constexpr int8 MAX_CHARACTERS = 6;
 
 };
