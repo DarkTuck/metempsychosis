@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "TurnCombatCharacter.generated.h"
 
-
+DECLARE_DELEGATE(EndTurnDelegate);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class METEMPSYCHOSIS_API UTurnCombatCharacter : public UActorComponent
 {
@@ -24,12 +24,15 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void BeginTurn();
-	void EndTurn();
+	void EndTurn() const;
 
 	void TakeDamage(int DamageAmount);
 	void Attack(UTurnCombatCharacter* Target);
+	EndTurnDelegate EndTurnDelegate;
 
 protected:
+	ACharacter* Character;
+	FTransform BattleTransform;
 	int GetActionPoints() const { return ActionPoints; }
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
 	int Health=100;
@@ -41,6 +44,9 @@ protected:
 	bool bIsFriendly=false;
 
 	void SpendActionPoints(int Amount);
+
+	void BeginCombat();
+
 
 		
 };

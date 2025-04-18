@@ -4,9 +4,10 @@
 #include "TurnCombatCharacter.h"
 
 #include "TurnBaseCombat.h"
+#include "GameFramework/Character.h"
 
 // Sets default values for this component's properties
-UTurnCombatCharacter::UTurnCombatCharacter()
+UTurnCombatCharacter::UTurnCombatCharacter(): Character(nullptr)
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
@@ -40,9 +41,9 @@ void UTurnCombatCharacter::BeginTurn()
 	ActionPoints = 3;
 }
 
-void UTurnCombatCharacter::EndTurn()
+void UTurnCombatCharacter::EndTurn() const
 {
-	//TODO
+	EndTurnDelegate.ExecuteIfBound();
 }
 
 void UTurnCombatCharacter::TakeDamage(const int DamageAmount)
@@ -67,5 +68,11 @@ void UTurnCombatCharacter::Attack(UTurnCombatCharacter* Target)
 void UTurnCombatCharacter::SpendActionPoints(const int Amount)
 {
 	ActionPoints -= Amount;
+}
+
+void UTurnCombatCharacter::BeginCombat()
+{
+	Character=Cast<ACharacter>(GetOwner());
+	BattleTransform=Character->GetActorTransform();
 }
 

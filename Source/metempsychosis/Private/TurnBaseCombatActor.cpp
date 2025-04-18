@@ -2,7 +2,7 @@
 
 
 #include "TurnBaseCombatActor.h"
-
+//#include ""
 #include "TurnBaseCombat.h"
 
 // Sets default values
@@ -37,4 +37,3 @@ void ATurnBaseCombatActor::StartCombat()
 	UGameplayStatics::OpenLevel(GetWorld(), FName(BattleScene));
 	return GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, "Trigger Fight");
 }
-
