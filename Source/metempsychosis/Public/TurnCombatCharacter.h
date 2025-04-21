@@ -29,11 +29,6 @@ public:
 	void TakeDamage(int DamageAmount);
 	void Attack(UTurnCombatCharacter* Target);
 	EndTurnDelegate EndTurnDelegate;
-
-protected:
-	ACharacter* Character;
-	FTransform BattleTransform;
-	int GetActionPoints() const { return ActionPoints; }
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
 	int Health=100;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
@@ -42,6 +37,12 @@ protected:
 	int ActionPoints=3;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
 	bool bIsFriendly=false;
+	
+protected:
+	ACharacter* Character;
+	FTransform BattleTransform;
+	int GetActionPoints() const { return ActionPoints; }
+
 
 	void SpendActionPoints(int Amount);
 
