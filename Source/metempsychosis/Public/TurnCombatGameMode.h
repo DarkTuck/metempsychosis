@@ -28,4 +28,6 @@ private:
 	static bool bIsSomeonesTurn;
 	static void ResetTurn();
 	static UUIwithEvents* HUD;
+	void CreateTurnOrder();
+	static void TurnOrderUpdate(ACharacter* Character);
 };

@@ -6,7 +6,7 @@
 
 #include "NPC.h"
 #include "NPC_AIController.h"
-#include "TurnBaseCombat.h"
+#include "DungeonCombatHandler.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -28,7 +28,7 @@ EBTNodeResult::Type UBTTask_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& Own
 		auto const CharMove=NPC->GetCharacterMovement();
 		if (FVector::Distance(CharMove->GetLocation(),PlayerLocation)<=TriggerFightDistance)
 		{
-			UTurnBaseCombat::StarCombat();
+			UDungeonCombatHandler::StarCombat(false);
 		}
 		//Move to player Location
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(cont,PlayerLocation);

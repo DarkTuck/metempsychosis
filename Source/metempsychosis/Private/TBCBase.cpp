@@ -8,7 +8,7 @@ ATBCBase::ATBCBase()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	CombatComponent = CreateDefaultSubobject<UTurnCombatCharacter>(TEXT("CombatComponent"));
+	CombatComponent = CreateDefaultSubobject<UTurnCombatComponent>(TEXT("CombatComponent"));
 
 }
 
@@ -21,7 +21,7 @@ void ATBCBase::BeginPlay()
 
 void ATBCBase::OnConstruction(const FTransform& Transform)
 {
-	CombatComponent->Health = HP;
+	//CombatComponent->Health = HP;
 }
 
 // Called every frame

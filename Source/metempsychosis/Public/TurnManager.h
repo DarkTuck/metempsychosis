@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "TurnCombatCharacter.h"
+#include "TurnCombatComponent.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "TurnManager.generated.h"
@@ -17,14 +17,14 @@ public:
 	// Sets default values for this actor's properties
 	ATurnManager();
 
-	void StartTurn(UTurnCombatCharacter* Character);
+	void StartTurn(UTurnCombatComponent* Character);
 	void EndTurn()const;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 private:
-	UTurnCombatCharacter* CurrentCharacter;
+	UTurnCombatComponent* CurrentCharacter;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

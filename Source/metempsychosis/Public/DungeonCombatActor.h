@@ -3,18 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TurnManager.h"
-#include "Kismet/GameplayStatics.h"
 #include "GameFramework/Actor.h"
-#include "TurnBaseCombatActor.generated.h"
+#include "DungeonCombatActor.generated.h"
 UCLASS()
-class METEMPSYCHOSIS_API ATurnBaseCombatActor : public AActor
+class METEMPSYCHOSIS_API ADungeonCombatActor : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
 	// Sets default values for this actor's properties
-	ATurnBaseCombatActor();
+	ADungeonCombatActor();
 
 protected:
 	// Called when the game starts or when spawned
@@ -24,10 +22,7 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	void ChangeCharacter() const;
 private:
-	UPROPERTY(EditAnywhere)
-	ATurnManager* TurnManager;
 	UPROPERTY(EditAnywhere)
 	FString BattleScene;
 	

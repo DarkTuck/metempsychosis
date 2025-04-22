@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TurnCombatCharacter.h"
+#include "TurnCombatComponent.h"
 #include "GameFramework/Character.h"
 #include "TBCBase.generated.h"
 
@@ -28,7 +28,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite,Category="TBCStats",EditAnywhere)
 	int MaxMP;
 	UPROPERTY(BlueprintReadWrite,Category="TBC",EditAnywhere)
-	UTurnCombatCharacter* CombatComponent;
+	UTurnCombatComponent* CombatComponent;
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
