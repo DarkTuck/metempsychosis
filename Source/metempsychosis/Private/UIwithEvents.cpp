@@ -10,3 +10,7 @@ void UUIwithEvents::ShowGameOverScreen_Implementation(const FString& Message)
 UUIwithEvents::UUIwithEvents(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
 {
 }
+
+void UUIwithEvents::FinishSelection() const
+{
+}

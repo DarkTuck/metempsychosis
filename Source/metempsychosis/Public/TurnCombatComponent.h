@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TBCPlayerController.h"
 #include "Components/ActorComponent.h"
 #include "TurnCombatComponent.generated.h"
+
+class UUIwithEvents;
 
 DECLARE_DELEGATE(EndTurnDelegate);
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -17,7 +20,6 @@ public:
 	UTurnCombatComponent();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:	
@@ -28,6 +30,8 @@ public:
 
 	void TakeDamage(int DamageAmount);
 	void Attack(UTurnCombatComponent* Target);
+	void AddUIWidget() const;
+	FTimerHandle TimerHandle;
 	EndTurnDelegate EndTurnDelegate;
 	
 	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
@@ -50,10 +54,15 @@ public:
 	int Wisdom;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
 	bool isPlayer=false;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI")
+	TSubclassOf<UUserWidget> UIWidgetClass;
 	
 protected:
+	UPROPERTY()
+	UUIwithEvents* UIWidget;
 	ACharacter* Character;
 	FTransform BattleTransform;
+	ATBCPlayerController* Controller;
 	//int GetActionPoints() const { return ActionPoints; }
 
 	void RequestTurn() const;

@@ -18,8 +18,7 @@ public:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="BattlePosition",meta=(AllowPrivateAccess=true))
 	UClass* Character;

@@ -29,12 +29,10 @@ void ABattlePosition::OnConstruction(const FTransform& Transform)
 	}
 }
 
-// Called when the game starts or when spawned
-void ABattlePosition::BeginPlay()
+void ABattlePosition::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 	SpawnCharacter();
-	
 }
 
 void ABattlePosition::SpawnCharacter()

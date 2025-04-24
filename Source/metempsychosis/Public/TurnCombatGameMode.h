@@ -29,5 +29,6 @@ private:
 	static void ResetTurn();
 	static UUIwithEvents* HUD;
 	void CreateTurnOrder();
+	FTimerHandle TimerHandle;
 	static void TurnOrderUpdate(ACharacter* Character);
 };
