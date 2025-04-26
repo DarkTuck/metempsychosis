@@ -2,8 +2,11 @@
 
 
 #include "TurnCombatComponent.h"
+
+#include "DynamicBattleCamera.h"
 #include "TurnCombatGameMode.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values for this component's properties
 UTurnCombatComponent::UTurnCombatComponent(): UIWidget(nullptr), Character(nullptr), BattleTransform(FTransform::Identity), Controller(nullptr)
@@ -120,6 +123,7 @@ void UTurnCombatComponent::BeginTurn()
                 UIWidgetClass ? TEXT("Valid") : TEXT("NULL"));
         }
     }
+	SetCamera();
 }
 
 void UTurnCombatComponent::AddUIWidget() const
@@ -144,6 +148,24 @@ void UTurnCombatComponent::AddUIWidget() const
     {
         UE_LOG(LogTemp, Error, TEXT("Widget is NULL in AddUIWidget"));
     }
+}
+
+void UTurnCombatComponent::SetCamera()
+{
+	if (ADynamicBattleCamera* Camera = Cast<ADynamicBattleCamera>(UGameplayStatics::GetActorOfClass(this, ADynamicBattleCamera::StaticClass())))
+	{
+		if (!Controller)
+		{
+			Controller = Cast<ATBCPlayerController>(GetWorld()->GetFirstPlayerController());
+		}
+		if (Controller)
+		{
+			Controller->SetViewTarget(Camera);
+			Camera->SetDynamicLocation(Character,FVector(0,0,0));
+			Camera->SetOrbit(Controller->GetViewTarget()!=nullptr);
+		}
+
+	}
 }
 
 /*

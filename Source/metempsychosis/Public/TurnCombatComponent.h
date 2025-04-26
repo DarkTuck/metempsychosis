@@ -63,6 +63,7 @@ protected:
 	ACharacter* Character;
 	FTransform BattleTransform;
 	ATBCPlayerController* Controller;
+	void SetCamera();
 	//int GetActionPoints() const { return ActionPoints; }
 
 	void RequestTurn() const;
