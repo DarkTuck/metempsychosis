@@ -27,9 +27,6 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void BeginTurn();
 	void EndTurn() const;
-
-	void TakeDamage(int DamageAmount);
-	void Attack(UTurnCombatComponent* Target);
 	void AddUIWidget() const;
 	FTimerHandle TimerHandle;
 	EndTurnDelegate EndTurnDelegate;
@@ -60,8 +57,10 @@ public:
 protected:
 	UPROPERTY()
 	UUIwithEvents* UIWidget;
+	UPROPERTY()
 	ACharacter* Character;
 	FTransform BattleTransform;
+	UPROPERTY()
 	ATBCPlayerController* Controller;
 	void SetCamera();
 	//int GetActionPoints() const { return ActionPoints; }

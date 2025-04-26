@@ -46,7 +46,7 @@ void ADynamicBattleCamera::SetOrbit(bool bIsOrbit)
 	}
 }
 
-void ADynamicBattleCamera::SetDynamicLocation(AActor* Actor, FVector Vector)
+void ADynamicBattleCamera::SetDynamicLocation(AActor* Actor, const FVector& Vector)
 {
 	if (Actor)
 	{

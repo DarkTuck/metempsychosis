@@ -33,5 +33,5 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 	void SetOrbit(bool bIsOrbit);
-	void SetDynamicLocation(AActor* Actor,FVector Vector);
+	void SetDynamicLocation(AActor* Actor, const FVector& Vector);
 };

@@ -19,12 +19,15 @@ public:
 	static void TurnRequest(ACharacter* Character);
 	static void StartTurn();
 	virtual void BeginPlay() override;
+	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")
+	TArray<AActor*>PartyMembers;
+	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")
+	TArray<AActor*> EnemyCharacters;
 	UFUNCTION()
 	void InitHUD(UUIwithEvents* NewHUD);
 private:
 	static TArray<ACharacter*> TurnOrder;
 	static AActor* Camera;
-	TArray<AActor*>PartyMembers,EnemyCharacters;
 	static bool bIsSomeonesTurn;
 	static void ResetTurn();
 	static UUIwithEvents* HUD;
