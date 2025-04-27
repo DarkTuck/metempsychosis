@@ -32,7 +32,6 @@ void ATurnCombatGameMode::TurnRequest(ACharacter* character)
 void ATurnCombatGameMode::StartTurn()
 {
 	UE_LOG(LogTemp, Warning, TEXT("StartTurn"));
-	UE_LOG(LogTemp, Warning, TEXT("bIsSomeonesTurn is %d"), bIsSomeonesTurn);
 	if (!bIsSomeonesTurn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("there is no ones turn"));
@@ -40,8 +39,6 @@ void ATurnCombatGameMode::StartTurn()
 		if (TurnOrder.Num() > 0)
 		{
 			UTurnCombatComponent* Character = Cast<UTurnCombatComponent>(Cast<ACharacter>(TurnOrder[0])->GetComponentByClass(UTurnCombatComponent::StaticClass()));
-			UE_LOG(LogTemp, Warning, TEXT("TurnOrder.Num() is %d"), TurnOrder.Num());
-			UE_LOG(LogTemp, Warning, TEXT("TurnOrder[0] is %s"), *TurnOrder[0]->GetName());
 			if (Character)
 			{
 				UE_LOG(LogTemp,Warning,TEXT("Character Is Not NULL"));
@@ -87,6 +84,7 @@ void ATurnCombatGameMode::BeginPlay()
 
 void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
 {
+	Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))->OnHUDCreated.RemoveDynamic(this,&ATurnCombatGameMode::InitHUD);
 	HUD=NewHUD;
 	UGameplayStatics::GetAllActorsOfClass(this,ATBCPartyBase::StaticClass(),PartyMembers);
 	UGameplayStatics::GetAllActorsOfClass(this,ATBCEnemyBase::StaticClass(),EnemyCharacters);
@@ -107,10 +105,7 @@ void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
 void ATurnCombatGameMode::ResetTurn()
 {
 	bIsSomeonesTurn = false;
-	if (TurnOrder.Num() > 0)
-	{
-		StartTurn();
-	}
+	StartTurn();
 }
 
 void ATurnCombatGameMode::CreateTurnOrder()

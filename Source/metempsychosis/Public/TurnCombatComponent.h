@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AIController.h"
 #include "TBCPlayerController.h"
 #include "Components/ActorComponent.h"
+#include "Navigation/PathFollowingComponent.h"
 #include "TurnCombatComponent.generated.h"
 
+class AAIController;
 class UUIwithEvents;
 
 DECLARE_DELEGATE(EndTurnDelegate);
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class METEMPSYCHOSIS_API UTurnCombatComponent : public UActorComponent
 {
@@ -26,8 +30,9 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 	void BeginTurn();
-	void EndTurn() const;
+	void EndTurn();
 	void AddUIWidget() const;
+	void AttackCommand(ACharacter* AttackTarget);
 	FTimerHandle TimerHandle;
 	EndTurnDelegate EndTurnDelegate;
 	
@@ -53,15 +58,38 @@ public:
 	bool isPlayer=false;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI")
 	TSubclassOf<UUserWidget> UIWidgetClass;
-	
+	UPROPERTY()
+	ACharacter*Target;
+	UPROPERTY()
+	FTransform BattleTransform;
 protected:
 	UPROPERTY()
 	UUIwithEvents* UIWidget;
 	UPROPERTY()
 	ACharacter* Character;
-	FTransform BattleTransform;
 	UPROPERTY()
 	ATBCPlayerController* Controller;
+	UPROPERTY()
+	class ADynamicBattleCamera* Camera;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
+	bool bIsRangedCharacter;
+	UPROPERTY()
+	AAIController* AIController;
+	UPROPERTY()
+	AActor* TopDownCamera;
+	UPROPERTY()
+	APawn* TemporaryCameraPawn;
+	UFUNCTION()
+	void OnMoveToTargetCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
+	void PerformAttack();
+	UFUNCTION()
+	void OnMoveToLocationCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result);
+	virtual void OnComponentCreated() override;
+	UPROPERTY()
+	AController* OriginalController;
+	void SwitchToAIController();
+	void RestoreOriginalController();
+
 	void SetCamera();
 	//int GetActionPoints() const { return ActionPoints; }
 
@@ -70,7 +98,7 @@ protected:
 	void SpendActionPoints(int Amount);
 
 	void BeginCombat();
-
-
-		
+	
+	void CloseAttack();
+	void RangeAttack();
 };

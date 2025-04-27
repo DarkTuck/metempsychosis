@@ -3,19 +3,22 @@
 
 #include "TurnCombatComponent.h"
 
+#include "AIController.h"
 #include "DynamicBattleCamera.h"
+#include "TBCBase.h"
+#include "TopDownCamera.h"
 #include "TurnCombatGameMode.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Navigation/PathFollowingComponent.h"
 
 // Sets default values for this component's properties
-UTurnCombatComponent::UTurnCombatComponent(): UIWidget(nullptr), Character(nullptr), BattleTransform(FTransform::Identity), Controller(nullptr)
+UTurnCombatComponent::UTurnCombatComponent(): UIWidget(nullptr), Character(nullptr), BattleTransform(FTransform::Identity), Controller(nullptr),AIController(nullptr)
 {
 	// Set this component to be initialized when the game starts and to be ticked every frame.
 	// You can turn these features
 	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
 	// ...
 }
 
@@ -24,6 +27,7 @@ UTurnCombatComponent::UTurnCombatComponent(): UIWidget(nullptr), Character(nullp
 void UTurnCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
+	TopDownCamera=UGameplayStatics::GetActorOfClass(this, ATopDownCamera::StaticClass());
 	if (isPlayer)
 	{
 		Controller=Cast<ATBCPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -60,8 +64,9 @@ void UTurnCombatComponent::BeginTurn()
 	//ActionPoints = 3;
 }
 */
-void UTurnCombatComponent::EndTurn() const
+void UTurnCombatComponent::EndTurn()
 {
+	RestoreOriginalController();
 	EndTurnDelegate.ExecuteIfBound();
 }
 
@@ -78,7 +83,6 @@ void UTurnCombatComponent::BeginTurn()
 {
     if (isPlayer)
     {
-        // Upewnij się, że Controller jest poprawny
         if (!Controller)
         {
             Controller = Cast<ATBCPlayerController>(GetWorld()->GetFirstPlayerController());
@@ -91,13 +95,11 @@ void UTurnCombatComponent::BeginTurn()
             UE_LOG(LogTemp, Warning, TEXT("Attempting to create widget..."));
             UE_LOG(LogTemp, Warning, TEXT("Controller: %s"), *Controller->GetName());
             UE_LOG(LogTemp, Warning, TEXT("UIWidgetClass: %s"), *UIWidgetClass->GetName());
-            
-            // Spróbuj stworzyć widget z pełną weryfikacją
+
             UIWidget = CreateWidget<UUIwithEvents>(Controller, UIWidgetClass);
-            
+        	UIWidget->SetPlayerCharacter(Cast<ATBCBase>(Character));
             if (!UIWidget)
             {
-                // Jeśli się nie udało, spróbuj przez GameInstance
                 if (UGameInstance* GI = GetWorld()->GetGameInstance())
                 {
                     UIWidget = CreateWidget<UUIwithEvents>(GI, UIWidgetClass);
@@ -105,8 +107,7 @@ void UTurnCombatComponent::BeginTurn()
                         UIWidget ? TEXT("Success") : TEXT("Failed"));
                 }
             }
-            
-            // Jeśli widget został utworzony, ustaw timer
+        	
             if (UIWidget)
             {
                 GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UTurnCombatComponent::AddUIWidget, 0.1f, false);
@@ -132,9 +133,8 @@ void UTurnCombatComponent::AddUIWidget() const
     {
         UE_LOG(LogTemp, Warning, TEXT("Adding widget to viewport"));
         UIWidget->SetVisibility(ESlateVisibility::Visible);
-        UIWidget->AddToViewport(100); // Wysoki Z-order dla pewności
-        
-        // Sprawdź czy widget jest rzeczywiście w viewport
+        UIWidget->AddToViewport(100); // High Z-order for safety reasons
+    	
         if (UIWidget->IsInViewport())
         {
             UE_LOG(LogTemp, Warning, TEXT("Widget successfully added to viewport"));
@@ -150,9 +150,204 @@ void UTurnCombatComponent::AddUIWidget() const
     }
 }
 
+void UTurnCombatComponent::AttackCommand(ACharacter* AttackTarget)
+{
+	Target=AttackTarget;
+	//Camera->SetOrbit(IsValid(Controller->GetViewTarget()));
+	if (bIsRangedCharacter)
+	{
+		RangeAttack();
+	}
+	else
+	{
+		CloseAttack();
+	}
+}
+void UTurnCombatComponent::CloseAttack()
+{
+	if (UIWidget)
+	{
+		UIWidget->RemoveFromParent();
+	}
+
+	if (!AIController)
+	{
+		SwitchToAIController();
+	}
+	if (!Target)
+	{
+		UE_LOG(LogTemp,Error,TEXT("Target is NULL"));
+		return;
+	}
+	EPathFollowingRequestResult::Type Result = AIController->MoveToActor(Target, true);
+	if (Result == EPathFollowingRequestResult::RequestSuccessful)
+	{
+		AIController->ReceiveMoveCompleted.AddDynamic(this, &UTurnCombatComponent::OnMoveToTargetCompleted);
+	}
+	else if (Result == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		OnMoveToTargetCompleted(FAIRequestID::InvalidRequest, EPathFollowingResult::Success);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("CloseAttack: Moving Error: %s"), 
+			Result == EPathFollowingRequestResult::Failed ? TEXT("FailedToFindPath") : TEXT("UnknownError"));
+	}
+
+
+}
+
+void UTurnCombatComponent::RangeAttack()
+{
+}
+
+void UTurnCombatComponent::OnMoveToTargetCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
+{
+	if (AIController)
+	{
+		AIController->ReceiveMoveCompleted.RemoveDynamic(this,&UTurnCombatComponent::OnMoveToTargetCompleted);
+	}
+	if (Result==EPathFollowingResult::Success)
+	{
+		PerformAttack();
+	}
+	else
+	{
+		UE_LOG(LogTemp,Error,TEXT("Move Failed:%d"),static_cast<int>(Result));
+	}
+}
+
+void UTurnCombatComponent::PerformAttack()
+{
+	//TODO
+	EPathFollowingRequestResult::Type Result = AIController->MoveToLocation(BattleTransform.GetLocation(), true);
+	if (Result == EPathFollowingRequestResult::RequestSuccessful)
+	{
+		AIController->ReceiveMoveCompleted.AddDynamic(this, &UTurnCombatComponent::OnMoveToLocationCompleted);
+	}
+	else if (Result == EPathFollowingRequestResult::AlreadyAtGoal)
+	{
+		OnMoveToLocationCompleted(FAIRequestID::InvalidRequest, EPathFollowingResult::Success);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("PerformAttack: Moving Error: %s"), 
+			Result == EPathFollowingRequestResult::Failed ? TEXT("FailedToFindPath") : TEXT("UnknownError"));
+	}
+}
+
+void UTurnCombatComponent::OnMoveToLocationCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
+{
+	if (AIController)
+	{
+		AIController->ReceiveMoveCompleted.RemoveDynamic(this, &UTurnCombatComponent::OnMoveToLocationCompleted);
+	}
+
+	Character->SetActorRotation(BattleTransform.GetRotation());
+	FTimerHandle DelayTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		DelayTimerHandle,
+		[this]
+		{
+			EndTurn();
+		},2.0f,false);
+	
+}
+
+void UTurnCombatComponent::OnComponentCreated()
+{
+	Super::OnComponentCreated();
+	Character=Cast<ACharacter>(GetOwner());
+}
+void UTurnCombatComponent::SwitchToAIController()
+{
+	 // Early return if Character reference is invalid
+    if (!Character)
+    {
+        UE_LOG(LogTemp, Error, TEXT("SwitchToAIController: Character is NULL"));
+        return;
+    }
+    
+    // Get the current controller and check if it's already an AIController
+    AController* CurrentController = Character->GetController();
+    if (CurrentController && CurrentController->IsA(AAIController::StaticClass()))
+    {
+        // If a character is already controlled by AIController, store the reference
+        AIController = Cast<AAIController>(CurrentController);
+        UE_LOG(LogTemp, Warning, TEXT("Character is already possessed by AIController"));
+        return;
+    }
+    
+    // Store the original controller if not already stored
+    if (!OriginalController)
+    {
+        OriginalController = CurrentController;
+        UE_LOG(LogTemp, Warning, TEXT("Stored original controller: %s"), 
+            OriginalController ? *OriginalController->GetClass()->GetName() : TEXT("NULL"));
+    }
+
+    // Unpossess current controller if it exists
+    if (CurrentController)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Unpossessing current controller: %s"), 
+            *CurrentController->GetClass()->GetName());
+        CurrentController->UnPossess();
+    }
+    
+    // Setup spawn parameters for new AIController
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.Owner = nullptr; // Important: Don't set an owner to avoid owner loop
+    SpawnParams.Instigator = Character;
+    
+    // Spawn new AIController
+    AIController = GetWorld()->SpawnActor<AAIController>(
+        AAIController::StaticClass(), 
+        FVector::ZeroVector, 
+        FRotator::ZeroRotator, 
+        SpawnParams
+    );
+	TemporaryCameraPawn = GetWorld()->SpawnActor<APawn>(APawn::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, SpawnParams);
+    
+    // Possess the character with a new AIController if spawn was successful
+    if (AIController)
+    {
+        AIController->Possess(Character);
+    	Controller->Possess(TemporaryCameraPawn);
+    	Controller->SetViewTarget(TopDownCamera);
+        UE_LOG(LogTemp, Warning, TEXT("Successfully switched character %s to AIController"), 
+            *Character->GetName());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Error, TEXT("Failed to create AIController"));
+    }
+}
+
+void UTurnCombatComponent::RestoreOriginalController()
+{
+	if (!Character || !OriginalController) return;
+    
+	// Unposses AIController
+	if (AIController)
+	{
+		AIController->UnPossess();
+		AIController->Destroy();
+		TemporaryCameraPawn->Destroy();
+		Controller->UnPossess();
+		AIController = nullptr;
+	}
+    
+	// return to normal controller
+	OriginalController->Possess(Character);
+	Controller->SetViewTarget(Camera);
+	UE_LOG(LogTemp, Warning, TEXT("Restored Controller for: %s"), *Character->GetName());
+}
+
+
 void UTurnCombatComponent::SetCamera()
 {
-	if (ADynamicBattleCamera* Camera = Cast<ADynamicBattleCamera>(UGameplayStatics::GetActorOfClass(this, ADynamicBattleCamera::StaticClass())))
+	Camera = Cast<ADynamicBattleCamera>(UGameplayStatics::GetActorOfClass(this, ADynamicBattleCamera::StaticClass()));
+	if (Camera)
 	{
 		if (!Controller)
 		{
@@ -201,7 +396,19 @@ void UTurnCombatComponent::SpendActionPoints(const int Amount)
 void UTurnCombatComponent::BeginCombat()
 {
 	Character=Cast<ACharacter>(GetOwner());
-	BattleTransform=Character->GetActorTransform();
+	//BattleTransform=Character->GetActorTransform();
+	if (AController* CurrentController = Character->GetController())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BeginCombat - Controller class: %s"), *CurrentController->GetClass()->GetName());
+		OriginalController=CurrentController;
+	}
+    
+
+	AIController = Cast<AAIController>(Character->GetController());
+	if (!AIController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AIController not found for character %s"), *Character->GetName());
+	}
+
 	
 }
-

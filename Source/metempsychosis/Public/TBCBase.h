@@ -29,6 +29,8 @@ protected:
 	int MaxMP;
 	UPROPERTY(BlueprintReadWrite,Category="TBC",EditAnywhere)
 	UTurnCombatComponent* CombatComponent;
+	UFUNCTION(BlueprintCallable,Category="TBC")
+	void SendAttackCommand(ACharacter* Target);
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

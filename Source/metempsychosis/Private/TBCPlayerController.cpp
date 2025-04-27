@@ -17,7 +17,21 @@ void ATBCPlayerController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
 	UE_LOG(LogTemp, Warning, TEXT("OnPossess wywołane"));
-    
+}
+
+
+
+void ATBCPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+	/*
+	UIWidget = CreateWidget<UUIwithEvents>(this,UIWidgetClass);
+	if (UIWidget)
+	{
+		UIWidget->AddToViewport();
+		OnHUDCreated.Broadcast(UIWidget);
+	}
+	*/
 	if (!UIWidgetClass)
 	{
 		UE_LOG(LogTemp, Error, TEXT("UIWidgetClass jest NULL!"));
@@ -38,20 +52,4 @@ void ATBCPlayerController::OnPossess(APawn* InPawn)
 	UE_LOG(LogTemp, Warning, TEXT("Próba wywołania OnHUDCreated"));
 	OnHUDCreated.Broadcast(UIWidget);
 	UE_LOG(LogTemp, Warning, TEXT("OnHUDCreated wywołane"));
-
-}
-
-
-
-void ATBCPlayerController::BeginPlay()
-{
-	Super::BeginPlay();
-	/*
-	UIWidget = CreateWidget<UUIwithEvents>(this,UIWidgetClass);
-	if (UIWidget)
-	{
-		UIWidget->AddToViewport();
-		OnHUDCreated.Broadcast(UIWidget);
-	}
-	*/
 }

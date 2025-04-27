@@ -23,7 +23,9 @@ public:
 	void UpdateHealthBar(float NewHealth);
 
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
-	void AddCharacter(ATBCBase* character);
+	void AddCharacter(ATBCBase* Character);
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void SetPlayerCharacter(ATBCBase*Character);
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
 	void ShowActionMenu() const;
 	UFUNCTION(BlueprintCallable, Category = "UI")

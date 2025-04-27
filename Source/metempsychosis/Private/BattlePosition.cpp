@@ -2,6 +2,8 @@
 
 
 #include "BattlePosition.h"
+
+#include "TBCBase.h"
 #include "Components/SceneComponent.h"
 
 // Sets default values
@@ -47,6 +49,7 @@ void ABattlePosition::SpawnCharacter()
 			SpawnParams.Owner = this;
 
 			AActor* SpawnedCActor = World->SpawnActor<AActor>(Character,SpawnLocation,SpawnRotation,SpawnParams);
+			Cast<ATBCBase>(SpawnedCActor)->GetComponentByClass<UTurnCombatComponent>()->BattleTransform=GetActorTransform();
 		}
 	}
 }

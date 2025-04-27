@@ -9,7 +9,16 @@ ATBCBase::ATBCBase()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 	CombatComponent = CreateDefaultSubobject<UTurnCombatComponent>(TEXT("CombatComponent"));
+	AutoPossessAI=EAutoPossessAI::PlacedInWorldOrSpawned;
 
+}
+
+void ATBCBase::SendAttackCommand(ACharacter* Target)
+{
+	if (CombatComponent)
+	{
+		CombatComponent->AttackCommand(Target);
+	}
 }
 
 // Called when the game starts or when spawned
