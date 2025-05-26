@@ -174,11 +174,6 @@ void UTurnCombatComponent::CloseAttack()
 	{
 		SwitchToAIController();
 	}
-	if (!Target)
-	{
-		UE_LOG(LogTemp,Error,TEXT("Target is NULL"));
-		return;
-	}
 	EPathFollowingRequestResult::Type Result = AIController->MoveToActor(Target, true);
 	if (Result == EPathFollowingRequestResult::RequestSuccessful)
 	{
@@ -199,6 +194,16 @@ void UTurnCombatComponent::CloseAttack()
 
 void UTurnCombatComponent::RangeAttack()
 {
+	if (UIWidget)
+	{
+		UIWidget->RemoveFromParent();
+	}
+
+	if (!AIController)
+	{
+		SwitchToAIController();
+	}
+	PerformAttack();
 }
 
 void UTurnCombatComponent::OnMoveToTargetCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
@@ -219,9 +224,10 @@ void UTurnCombatComponent::OnMoveToTargetCompleted(FAIRequestID RequestID, EPath
 
 void UTurnCombatComponent::PerformAttack()
 {
-	//TODO
-	EPathFollowingRequestResult::Type Result = AIController->MoveToLocation(BattleTransform.GetLocation(), true);
-	if (Result == EPathFollowingRequestResult::RequestSuccessful)
+	//Temporary
+	ATBCBase* TargetCharacter=Cast<ATBCBase>(Target);
+	TargetCharacter->GetDamaged(TargetCharacter->CalculateDamage(Cast<ATBCBase>(GetOwner())->BaseDamage));
+	if (const EPathFollowingRequestResult::Type Result = AIController->MoveToLocation(BattleTransform.GetLocation(), true); Result == EPathFollowingRequestResult::RequestSuccessful)
 	{
 		AIController->ReceiveMoveCompleted.AddDynamic(this, &UTurnCombatComponent::OnMoveToLocationCompleted);
 	}
@@ -313,7 +319,8 @@ void UTurnCombatComponent::SwitchToAIController()
     {
         AIController->Possess(Character);
     	Controller->Possess(TemporaryCameraPawn);
-    	Controller->SetViewTarget(TopDownCamera);
+    	Controller->SetViewTarget(Character);
+    	//Camera->SetDynamicLocation(Character,FVector(0,0,0));
         UE_LOG(LogTemp, Warning, TEXT("Successfully switched character %s to AIController"), 
             *Character->GetName());
     }

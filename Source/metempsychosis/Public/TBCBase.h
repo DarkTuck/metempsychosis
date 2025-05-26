@@ -15,7 +15,10 @@ class METEMPSYCHOSIS_API ATBCBase : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ATBCBase();
-
+	int CalculateDamage(int Damage) const;
+	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
+	int BaseDamage;
+	void GetDamaged(int Damage);
 protected:
 	UPROPERTY(BlueprintReadWrite,Category="TBCName",EditAnywhere)
 	FString Name;
@@ -24,9 +27,12 @@ protected:
 	UPROPERTY(BlueprintReadWrite,Category="TBCStats",EditAnywhere)
 	int MaxHP;
 	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
+	int DamageReduction;
+	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
 	int MP;
 	UPROPERTY(BlueprintReadWrite,Category="TBCStats",EditAnywhere)
 	int MaxMP;
+
 	UPROPERTY(BlueprintReadWrite,Category="TBC",EditAnywhere)
 	UTurnCombatComponent* CombatComponent;
 	UFUNCTION(BlueprintCallable,Category="TBC")

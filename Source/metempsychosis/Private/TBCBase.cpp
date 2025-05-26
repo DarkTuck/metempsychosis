@@ -13,6 +13,17 @@ ATBCBase::ATBCBase()
 
 }
 
+int ATBCBase::CalculateDamage(const int Damage) const
+{
+	return Damage-DamageReduction;
+}
+
+void ATBCBase::GetDamaged(const int Damage)
+{
+	HP-=Damage;
+}
+
+
 void ATBCBase::SendAttackCommand(ACharacter* Target)
 {
 	if (CombatComponent)

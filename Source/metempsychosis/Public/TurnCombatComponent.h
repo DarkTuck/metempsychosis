@@ -44,16 +44,16 @@ public:
 	//int ActionPoints=3;
 	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="TurnBaseCombatCharacter")
 	//bool bIsFriendly=false;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
-	int Strength;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
-	int Accuracy;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
-	int Haste;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
-	int Stamina;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
-	int Wisdom;
+	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
+	//int Strength;
+	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
+	//int Accuracy;
+	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
+	//int Haste;
+	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
+	//int Stamina;
+	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
+	//int Wisdom;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
 	bool isPlayer=false;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI")
@@ -62,6 +62,8 @@ public:
 	ACharacter*Target;
 	UPROPERTY()
 	FTransform BattleTransform;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI")
+	UAnimMontage* HitAnimMontage;
 protected:
 	UPROPERTY()
 	UUIwithEvents* UIWidget;
