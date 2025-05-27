@@ -13,7 +13,14 @@
 #include "Navigation/PathFollowingComponent.h"
 
 // Sets default values for this component's properties
-UTurnCombatComponent::UTurnCombatComponent(): UIWidget(nullptr), Character(nullptr), BattleTransform(FTransform::Identity), Controller(nullptr),AIController(nullptr)
+UTurnCombatComponent::UTurnCombatComponent(): Target(nullptr), BattleTransform(FTransform::Identity), HitAnimMontage(nullptr),
+                                              UIWidget(nullptr), Character(nullptr),
+                                              Controller(nullptr),
+                                              Camera(nullptr),
+                                              bIsRangedCharacter(false),
+                                              AIController(nullptr), TopDownCamera(nullptr),
+                                              TemporaryCameraPawn(nullptr),
+                                              OriginalController(nullptr)
 {
 	// Set this component to be initialized when the game starts and to be ticked every frame.
 	// You can turn these features
@@ -21,7 +28,6 @@ UTurnCombatComponent::UTurnCombatComponent(): UIWidget(nullptr), Character(nullp
 	PrimaryComponentTick.bCanEverTick = true;
 	// ...
 }
-
 
 
 void UTurnCombatComponent::BeginPlay()

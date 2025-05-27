@@ -72,3 +72,16 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+/.idea
+/Intermediate
+/DerivedDataCache
+/Content
+/.vscode
+/Saved
+/.git
+
+*.uproject
+Makefile
+*.ignore
+*.code-workspace
