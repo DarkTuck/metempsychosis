@@ -6,7 +6,8 @@
 #include "TurnCombatComponent.h"
 #include "GameFramework/Character.h"
 #include "TBCBase.generated.h"
-
+UDELEGATE()
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRefreshUI);
 UCLASS()
 class METEMPSYCHOSIS_API ATBCBase : public ACharacter
 {
@@ -23,6 +24,8 @@ public:
 	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
 	int BaseDamage;
 	void GetDamaged(int Damage);
+	UPROPERTY(BlueprintAssignable,Category="TBC")
+	FRefreshUI RefreshUI;
 protected:
 	UPROPERTY(BlueprintReadWrite,Category="TBCName",EditAnywhere)
 	FString Name;
