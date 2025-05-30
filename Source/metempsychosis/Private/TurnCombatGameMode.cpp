@@ -23,38 +23,38 @@ ATurnCombatGameMode::ATurnCombatGameMode()
 	//PlayerControllerClass = ATBCPlayerController::StaticClass();
 }
 
-void ATurnCombatGameMode::TurnRequest(ACharacter* character)
+void ATurnCombatGameMode::TurnRequest(ACharacter* Character)
 {
-	TurnOrder.AddUnique(character);
+	TurnOrder.AddUnique(Character);
 	//StartTurn();
 }
 
 void ATurnCombatGameMode::StartTurn()
 {
-	UE_LOG(LogTemp, Warning, TEXT("StartTurn"));
+	UE_LOG(LogTemp, Log, TEXT("StartTurn"));
 	if (!bIsSomeonesTurn)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("there is no ones turn"));
+		UE_LOG(LogTemp, Log, TEXT("there is no ones turn"));
 		bIsSomeonesTurn = true;
 		if (TurnOrder.Num() > 0)
 		{
-			UTurnCombatComponent* Character = Cast<UTurnCombatComponent>(Cast<ACharacter>(TurnOrder[0])->GetComponentByClass(UTurnCombatComponent::StaticClass()));
-			if (Character)
+			if (UTurnCombatComponent* Character = Cast<UTurnCombatComponent>(Cast<ACharacter>(TurnOrder[0])->GetComponentByClass(UTurnCombatComponent::StaticClass())))
 			{
-				UE_LOG(LogTemp,Warning,TEXT("Character Is Not NULL"));
+				UE_LOG(LogTemp,Log,TEXT("Character Is Not NULL"));
 				Character->BeginTurn();
                 Character->EndTurnDelegate.BindStatic(&ATurnCombatGameMode::ResetTurn);
                 TurnOrder.RemoveAt(0);
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Character is NULL"));
+				UE_LOG(LogTemp, Error, TEXT("Character is NULL"));
 			}
 
 			
 		}
 		else
 		{
+			GEngine->GameViewport->GetWorld()->GetAuthGameMode<ATurnCombatGameMode>()->CreateTurnOrder();
 			ResetTurn();
 		}
 	}
@@ -69,11 +69,11 @@ void ATurnCombatGameMode::BeginPlay()
 	//Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))->OnHUDCreated.AddDynamic(this,&ATurnCombatGameMode::InitHUD);
 	if (ATBCPlayerController* PC = Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
 	{
-		UE_LOG(LogTemp, Warning, TEXT("trying to bind InitHUD"));
+		UE_LOG(LogTemp, Log, TEXT("trying to bind InitHUD"));
 		PC->OnHUDCreated.AddDynamic(this, &ATurnCombatGameMode::InitHUD);
 		if (PC->UIWidget)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("UIWidget already exist starting InitHUD"));
+			UE_LOG(LogTemp, Log, TEXT("UIWidget already exist starting InitHUD"));
 			InitHUD(PC->UIWidget);
 		}
 	}
@@ -116,35 +116,31 @@ void ATurnCombatGameMode::CreateTurnOrder()
 	{
 		if (Character)
 		{
-			ATBCPartyBase* Party = Cast<ATBCPartyBase>(Character);
-			if (Party)
+			if (const ATBCBase* Party = Cast<ATBCBase>(Character))
 			{
-				if (UTurnCombatComponent* TurnComp = Party->GetComponentByClass<UTurnCombatComponent>())
-				{
-					return TurnComp->isPlayer;
-				}
+				return Party->bIsPlayer;
 			}
 		}
 		return false;
 	});
 	if (UDungeonCombatHandler::bIsPlayerAdvantage) //first stars player and his party then enemy
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Player is first"));
-		int8 index=0;
+		UE_LOG(LogTemp, Log, TEXT("Player is first"));
+		int8 Index=0;
 		TurnOrder.Add(Cast<ACharacter>(*PlayerCharacter));
 		for (AActor* const Character : PartyMembers)
 		{
-			index++;
+			Index++;
 			TurnOrder.AddUnique(Cast<ACharacter>(Character));
-			UE_LOG(LogTemp, Warning,TEXT("Character %s added at index: %d"),*Character->GetName(),index-1) ;
-			UE_LOG(LogTemp,Warning,TEXT("Array value at current index: %s  current index: %d"),*Cast<ACharacter>(TurnOrder[index-1])->GetName(),index-1);
+			UE_LOG(LogTemp, Log,TEXT("Character %s added at index: %d"),*Character->GetName(),Index-1) ;
+			UE_LOG(LogTemp,Log,TEXT("Array value at current index: %s  current index: %d"),*Cast<ACharacter>(TurnOrder[Index-1])->GetName(),Index-1);
 		}
-		index=0;
+		Index=0;
 		for (AActor* const Character : EnemyCharacters)
 		{
-			index++;
+			Index++;
 			TurnOrder.AddUnique(Cast<ACharacter>(Character));
-			UE_LOG(LogTemp, Warning,TEXT("Enemy %s added at index: %d"),*Character->GetName(),index-1) ;
+			UE_LOG(LogTemp, Log,TEXT("Enemy %s added at index: %d"),*Character->GetName(),Index-1) ;
 		}
 	}
 	else //first starts enemy then player and his party

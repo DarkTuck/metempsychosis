@@ -21,6 +21,12 @@ int ATBCBase::CalculateDamage(const int Damage) const
 void ATBCBase::GetDamaged(const int Damage)
 {
 	HP-=Damage;
+	UE_LOG(LogTemp,Log,TEXT("CurentHP %d"),HP);
+	if (HP<=0)
+	{
+		Destroy();
+	}
+	
 }
 
 

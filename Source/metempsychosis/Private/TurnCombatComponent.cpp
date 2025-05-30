@@ -3,6 +3,7 @@
 
 #include "TurnCombatComponent.h"
 
+#include "AIBattleControler.h"
 #include "AIController.h"
 #include "DynamicBattleCamera.h"
 #include "TBCBase.h"
@@ -34,7 +35,7 @@ void UTurnCombatComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	TopDownCamera=UGameplayStatics::GetActorOfClass(this, ATopDownCamera::StaticClass());
-	if (isPlayer)
+	if (Cast<ATBCBase>(GetOwner())->bIsPlayer)
 	{
 		Controller=Cast<ATBCPlayerController>(GetWorld()->GetFirstPlayerController());
 		if (Controller)
@@ -87,7 +88,7 @@ void UTurnCombatComponent::AddUIWidget() const
 */
 void UTurnCombatComponent::BeginTurn()
 {
-    if (isPlayer)
+    if (Cast<ATBCBase>(GetOwner())->bIsPlayer)
     {
         if (!Controller)
         {
@@ -130,7 +131,15 @@ void UTurnCombatComponent::BeginTurn()
                 UIWidgetClass ? TEXT("Valid") : TEXT("NULL"));
         }
     }
+	else
+	{
+		if (UAIBattleControler* Controler = Cast<UAIBattleControler>(GetOwner()->GetComponentByClass(UAIBattleControler::StaticClass())))
+        {
+        	Controler->HandleLogic(this);
+        }
+	}
 	SetCamera();
+
 }
 
 void UTurnCombatComponent::AddUIWidget() const
@@ -232,6 +241,7 @@ void UTurnCombatComponent::PerformAttack()
 {
 	//Temporary
 	ATBCBase* TargetCharacter=Cast<ATBCBase>(Target);
+	UE_LOG(LogTemp,Log,TEXT("Damage: %d"),TargetCharacter->CalculateDamage(Cast<ATBCBase>(GetOwner())->BaseDamage));
 	TargetCharacter->GetDamaged(TargetCharacter->CalculateDamage(Cast<ATBCBase>(GetOwner())->BaseDamage));
 	if (const EPathFollowingRequestResult::Type Result = AIController->MoveToLocation(BattleTransform.GetLocation(), true); Result == EPathFollowingRequestResult::RequestSuccessful)
 	{

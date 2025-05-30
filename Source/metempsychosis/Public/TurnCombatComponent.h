@@ -54,8 +54,6 @@ public:
 	//int Stamina;
 	//UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
 	//int Wisdom;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
-	bool isPlayer=false;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="UI")
 	TSubclassOf<UUserWidget> UIWidgetClass;
 	UPROPERTY()

@@ -15,6 +15,10 @@ class METEMPSYCHOSIS_API ATBCBase : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ATBCBase();
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
+	bool bIsPlayer=false;
+	UPROPERTY()
+	bool bIsEnemyCharacter=false;
 	int CalculateDamage(int Damage) const;
 	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
 	int BaseDamage;

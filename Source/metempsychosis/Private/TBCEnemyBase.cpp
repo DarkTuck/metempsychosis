@@ -3,3 +3,8 @@
 
 #include "TBCEnemyBase.h"
 
+ATBCEnemyBase::ATBCEnemyBase()
+{
+	Controler=CreateDefaultSubobject<UAIBattleControler>(TEXT("AIController"));
+	bIsEnemyCharacter=true;
+}
