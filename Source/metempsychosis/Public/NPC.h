@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FEniemiesParty.h"
+#include "EnemiesToSpawn.h"
 #include "PatrolPath.h"
 #include "GameFramework/Character.h"
 #include "NPC.generated.h"
@@ -17,7 +17,7 @@ public:
 	// Sets default values for this character's properties
 	ANPC();
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FEniemiesParty Party;
+	TSubclassOf<UEnemiesToSpawn> Party;
 	
 
 protected:
@@ -37,5 +37,6 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UBehaviorTree* GetBehaviorTree() const;
 	APatrolPath* GetPatrolPath() const;
+	TArray<ATBCEnemyBase*> GetEnemiesToSpawn() const;
 
 };

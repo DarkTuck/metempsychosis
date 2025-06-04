@@ -61,6 +61,8 @@ void ATurnCombatGameMode::StartTurn()
 }
 void ATurnCombatGameMode::BeginPlay()
 {
+	PartyMembers=UDungeonCombatHandler::Parties;
+	EnemyCharacters=UDungeonCombatHandler::EniemiesParty;
 	bIsSomeonesTurn=false;
 	Super::BeginPlay();
 	Camera = UGameplayStatics::GetActorOfClass(this, ATopDownCamera::StaticClass());
@@ -108,15 +110,25 @@ void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
 {
 	Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))->OnHUDCreated.RemoveDynamic(this,&ATurnCombatGameMode::InitHUD);
 	HUD=NewHUD;
-	UGameplayStatics::GetAllActorsOfClass(this,ATBCPartyBase::StaticClass(),PartyMembers);
-	UGameplayStatics::GetAllActorsOfClass(this,ATBCEnemyBase::StaticClass(),EnemyCharacters);
-	for (AActor* const Character : PartyMembers)
+	//UGameplayStatics::GetAllActorsOfClass(this,ATBCPartyBase::StaticClass(),PartyMembers);
+	//GameplayStatics::GetAllActorsOfClass(this,ATBCEnemyBase::StaticClass(),EnemyCharacters);
+	int8 EnemyIndex=0;
+	int8 PlayerIndex=0;
+	for (int8 i = 0;i<8;i++)
 	{
-		if (ATBCBase* TBase=Cast<ATBCBase>(Character))
+		if (SpawnPoints[i]->bIsEnemy)
 		{
-			HUD->AddCharacter(TBase);
+			SpawnPoints[i]->Character=Cast<UClass>(EnemyCharacters[EnemyIndex]);
+			EnemyIndex++;
+		}
+		else
+		{
+			SpawnPoints[i]->Character=Cast<UClass>(PartyMembers[PlayerIndex]);
+			HUD->AddCharacter(Cast<ATBCBase>(PartyMembers[PlayerIndex]));
+			PlayerIndex++;
 		}
 	}
+	SpawnActors.Broadcast();
 	CreateTurnOrder();
 	//if (UWorld* World=GetWorld())
 	//{
@@ -134,7 +146,7 @@ void ATurnCombatGameMode::CreateTurnOrder()
 {
 	TurnOrder.Empty();
 	//find a player character to always start his turn before a party
-	AActor** PlayerCharacter = PartyMembers.FindByPredicate([](AActor* Character)
+	ATBCPartyBase** PlayerCharacter = PartyMembers.FindByPredicate([](ATBCPartyBase* Character)
 	{
 		if (Character)
 		{

@@ -42,3 +42,8 @@ APatrolPath* ANPC::GetPatrolPath() const
 	return PatrolPath;
 }
 
+TArray<ATBCEnemyBase*> ANPC::GetEnemiesToSpawn() const
+{
+	return Cast<UEnemiesToSpawn>(Party)->GetEnemies();
+}
+

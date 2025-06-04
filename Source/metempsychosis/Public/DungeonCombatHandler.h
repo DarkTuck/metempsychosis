@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "TBCEnemyBase.h"
+#include "TBCPartyBase.h"
 #include "DungeonCombatHandler.generated.h"
 
 
@@ -23,6 +24,7 @@ public:
 	static void EndCombat(bool bPlayerWon);
 	static FString MapName;
 	static TArray<ATBCEnemyBase*> EniemiesParty;
+	static TArray<ATBCPartyBase*> Parties;
 protected:
 	static FVector PlayerSpawnLocation;
 };

@@ -4,7 +4,9 @@
 #include "BattlePosition.h"
 
 #include "TBCBase.h"
+#include "TurnCombatGameMode.h"
 #include "Components/SceneComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABattlePosition::ABattlePosition()
@@ -21,7 +23,7 @@ ABattlePosition::ABattlePosition()
 void ABattlePosition::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	if (isEnemy)
+	if (bIsEnemy)
 	{
 		Arrow->SetArrowColor(FLinearColor::Red);
 	}
@@ -34,7 +36,8 @@ void ABattlePosition::OnConstruction(const FTransform& Transform)
 void ABattlePosition::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	SpawnCharacter();
+	Cast<ATurnCombatGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->SpawnActors.AddUObject(this,&ABattlePosition::SpawnCharacter);
+	//SpawnCharacter();
 }
 
 void ABattlePosition::SpawnCharacter()

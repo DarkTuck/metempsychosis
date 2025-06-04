@@ -3,6 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BattlePosition.h"
+#include "TBCEnemyBase.h"
+#include "TBCPartyBase.h"
 #include "UIwithEvents.h"
 #include "GameFramework/GameModeBase.h"
 #include "TurnCombatGameMode.generated.h"
@@ -10,6 +13,7 @@
 /**
  * 
  */
+DECLARE_MULTICAST_DELEGATE(SpawnActors)
 UCLASS()
 class METEMPSYCHOSIS_API ATurnCombatGameMode : public AGameModeBase
 {
@@ -21,11 +25,14 @@ public:
 	virtual void BeginPlay() override;
 	void CharacterDies(bool bIsParty,ACharacter* Character);
 	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")
-	TArray<AActor*>PartyMembers;
+	TArray<ATBCPartyBase*>PartyMembers;
 	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")
-	TArray<AActor*> EnemyCharacters;
+	TArray<ATBCEnemyBase*> EnemyCharacters;
 	UFUNCTION()
 	void InitHUD(UUIwithEvents* NewHUD);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TurnOrder")
+	TArray<ABattlePosition*> SpawnPoints;
+	SpawnActors SpawnActors;
 private:
 	static TArray<ACharacter*> TurnOrder;
 	static AActor* Camera;

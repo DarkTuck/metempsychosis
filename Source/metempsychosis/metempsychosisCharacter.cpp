@@ -95,6 +95,11 @@ void AmetempsychosisCharacter::SetupPlayerInputComponent(UInputComponent* Player
 	}
 }
 
+TArray<ATBCPartyBase*> AmetempsychosisCharacter::GetParties() const
+{
+	return Cast<UPlayerParty>(PartyDataAsset)->GetParties();
+}
+
 void AmetempsychosisCharacter::SetupStimulusSource()
 {
 	StimulusSourceComponent= CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimulusSource"));

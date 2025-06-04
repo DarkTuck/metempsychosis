@@ -16,15 +16,17 @@ public:
 	// Sets default values for this actor's properties
 	ABattlePosition();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="BattlePosition",meta=(AllowPrivateAccess=true))
+	UClass* Character;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="BattlePosition",meta=(AllowPrivateAccess=true))
+	bool bIsEnemy;
 
 protected:
 	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="BattlePosition",meta=(AllowPrivateAccess=true))
-	UClass* Character;
+
 	UArrowComponent* Arrow;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="BattlePosition",meta=(AllowPrivateAccess=true))
-	bool isEnemy;
+
 	void SpawnCharacter();
 
 public:	

@@ -1,15 +1,16 @@
 // Fill out your copyright notice in the Description page of Project Settings.
-
-
-#include "Kismet/GameplayStatics.h"
 #include "DungeonCombatHandler.h"
-
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
+#include "metempsychosis/metempsychosisCharacter.h"
+
+
 FOnStartCombat UDungeonCombatHandler::OnStartCombat;
 bool UDungeonCombatHandler::bIsPlayerAdvantage;
 FVector UDungeonCombatHandler::PlayerSpawnLocation;
 FString UDungeonCombatHandler::MapName;
 TArray<ATBCEnemyBase*> UDungeonCombatHandler::EniemiesParty;
+TArray<ATBCPartyBase*> UDungeonCombatHandler::Parties;
 
 UDungeonCombatHandler::UDungeonCombatHandler()
 {
@@ -18,8 +19,10 @@ UDungeonCombatHandler::UDungeonCombatHandler()
 void UDungeonCombatHandler::StarCombat(const bool bIsPlayer, const TArray<ATBCEnemyBase*>& Party)
 {
 	bIsPlayerAdvantage=bIsPlayer;
-	PlayerSpawnLocation = UGameplayStatics::GetPlayerCharacter(GEngine->GameViewport->GetWorld(),0)->GetActorLocation();
+	const UObject* WorldContext=GEngine->GameViewport->GetWorld();
+	PlayerSpawnLocation = UGameplayStatics::GetPlayerCharacter(WorldContext,0)->GetActorLocation();
 	EniemiesParty=Party;
+	Parties=Cast<AmetempsychosisCharacter>(UGameplayStatics::GetPlayerCharacter(WorldContext,0))->GetParties();
 	OnStartCombat.Broadcast();
 }
 
