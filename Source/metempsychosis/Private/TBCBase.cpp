@@ -3,6 +3,10 @@
 
 #include "TBCBase.h"
 
+#include "TurnCombatGameMode.h"
+#include "GameFramework/GameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+
 // Sets default values
 ATBCBase::ATBCBase()
 {
@@ -25,6 +29,7 @@ void ATBCBase::GetDamaged(const int Damage)
 	UE_LOG(LogTemp,Log,TEXT("CurentHP %d"),HP);
 	if (HP<=0)
 	{
+		Cast<ATurnCombatGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->CharacterDies(!bIsEnemyCharacter,this);
 		Destroy();
 	}
 	

@@ -18,6 +18,7 @@ ADungeonCombatActor::ADungeonCombatActor()
 void ADungeonCombatActor::BeginPlay()
 {
 	Super::BeginPlay();
+	UDungeonCombatHandler::MapName=UGameplayStatics::GetCurrentLevelName(GetWorld());
 	
 }
 

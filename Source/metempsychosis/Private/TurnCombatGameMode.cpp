@@ -82,6 +82,28 @@ void ATurnCombatGameMode::BeginPlay()
 	//END TEMP
 }
 
+void ATurnCombatGameMode::CharacterDies(const bool bIsParty, ACharacter* Character)
+{
+	if (bIsParty)
+	{
+		ATBCPartyBase* PartyCharacter = Cast<ATBCPartyBase>(Character);
+		PartyMembers.Remove(PartyCharacter);
+		if (PartyMembers.Num() <= 0)
+		{
+			UDungeonCombatHandler::EndCombat(false);
+		}
+	}
+	else
+	{
+		ATBCEnemyBase* EnemyCharacter = Cast<ATBCEnemyBase>(Character);
+		EnemyCharacters.Remove(EnemyCharacter);
+		if (EnemyCharacters.Num() <= 0)
+		{
+			UDungeonCombatHandler::EndCombat(true);
+		}
+	}
+}
+
 void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
 {
 	Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))->OnHUDCreated.RemoveDynamic(this,&ATurnCombatGameMode::InitHUD);
@@ -127,6 +149,10 @@ void ATurnCombatGameMode::CreateTurnOrder()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Player is first"));
 		int8 Index=0;
+		if (!PlayerCharacter)
+		{
+			UDungeonCombatHandler::EndCombat(false);
+		}
 		TurnOrder.Add(Cast<ACharacter>(*PlayerCharacter));
 		for (AActor* const Character : PartyMembers)
 		{
@@ -158,8 +184,6 @@ void ATurnCombatGameMode::CreateTurnOrder()
 	}
 	StartTurn();
 }
-
-
 
 void ATurnCombatGameMode::TurnOrderUpdate(ACharacter* Character)
 {

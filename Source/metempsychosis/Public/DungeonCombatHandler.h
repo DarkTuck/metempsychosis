@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "TBCEnemyBase.h"
 #include "DungeonCombatHandler.generated.h"
 
 
@@ -16,7 +17,12 @@ class METEMPSYCHOSIS_API UDungeonCombatHandler : public UObject
 	GENERATED_BODY()
 public:
 	UDungeonCombatHandler();
-	static void StarCombat(bool bIsPlayer);
+	static void StarCombat(bool bIsPlayer, const TArray<ATBCEnemyBase*>& Party);
 	static FOnStartCombat OnStartCombat;
 	static bool bIsPlayerAdvantage;
+	static void EndCombat(bool bPlayerWon);
+	static FString MapName;
+	static TArray<ATBCEnemyBase*> EniemiesParty;
+protected:
+	static FVector PlayerSpawnLocation;
 };

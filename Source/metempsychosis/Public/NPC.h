@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FEniemiesParty.h"
 #include "PatrolPath.h"
-#include "BehaviorTree/BehaviorTree.h"
 #include "GameFramework/Character.h"
 #include "NPC.generated.h"
 
@@ -16,6 +16,9 @@ class METEMPSYCHOSIS_API ANPC : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ANPC();
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	FEniemiesParty Party;
+	
 
 protected:
 	// Called when the game starts or when spawned

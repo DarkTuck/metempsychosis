@@ -18,7 +18,7 @@ public:
 	ATBCBase();
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="CharacterStats")
 	bool bIsPlayer=false;
-	UPROPERTY()
+	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
 	bool bIsEnemyCharacter=false;
 	int CalculateDamage(int Damage) const;
 	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)

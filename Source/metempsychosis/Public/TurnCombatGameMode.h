@@ -19,6 +19,7 @@ public:
 	static void TurnRequest(ACharacter* Character);
 	static void StartTurn();
 	virtual void BeginPlay() override;
+	void CharacterDies(bool bIsParty,ACharacter* Character);
 	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")
 	TArray<AActor*>PartyMembers;
 	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")
