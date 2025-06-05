@@ -3,13 +3,23 @@
 
 #include "EnemiesToSpawn.h"
 
-TArray<ATBCEnemyBase*> UEnemiesToSpawn::GetEnemies()
+void UEnemiesToSpawn::RequestAsyncLoad(const UObject* DataOwner)
 {
-	TArray<ATBCEnemyBase*> EnemiesToReturn;
-	for (TSubclassOf<ATBCEnemyBase> EnemiesClass : Enemies)
+}
+
+void UEnemiesToSpawn::RequestAsyncUnload(const UObject* DataOwner)
+{
+}
+
+TArray<ATBCEnemyBase*> UEnemiesToSpawn::GetEnemies() const
+{
+	TArray<ATBCEnemyBase*> ReturnArray;
+	for (int8 i = 0; i < Enemies.Num(); i++)
 	{
-		ATBCEnemyBase* CharacterToAdd = Cast<ATBCEnemyBase>(EnemiesClass);
-		EnemiesToReturn.Add(CharacterToAdd);
+		const UClass* Character = Enemies[i].LoadSynchronous();
+		ATBCEnemyBase* Enemy = Character->GetDefaultObject<ATBCEnemyBase>();
+		ReturnArray.Add(Enemy);
+		UE_LOG(LogTemp,Log,TEXT("Added Character:%s"),*Enemy->GetName());
 	}
-	return EnemiesToReturn;
+	return ReturnArray;
 }

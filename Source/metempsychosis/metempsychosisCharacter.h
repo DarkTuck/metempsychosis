@@ -53,7 +53,8 @@ protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerParty)
+	TSoftObjectPtr<UPlayerParty> PartyData;
 	/** Called for looking input */
 	void Look(const FInputActionValue& Value);
 			
@@ -61,8 +62,15 @@ protected:
 protected:
 
 	virtual void NotifyControllerChanged() override;
-
+	virtual void BeginPlay() override;
+	//UPROPERTY()
+	//TArray<ATBCPartyBase*> Parties;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// 2) Po załadowaniu cache’ujemy wskaźnik, żeby Garbage Collector
+	//    nie usunął obiektu i żeby nie wołać LoadSynchronous() za każdym razem.
+	//UPROPERTY()
+	//UPlayerParty* CachedPlayerParty;
 
 public:
 	/** Returns CameraBoom subobject **/
@@ -70,12 +78,25 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = PlayerParty)
-	TSubclassOf<UPlayerParty> PartyDataAsset;
 
+	//UPROPERTY()
+	//UPlayerParty* PartyDataAsset;
+	//
+	// // -----------------------
+	// // 3) Funkcja zwracająca tablicę ATBCPartyBase*; jeśli asset jeszcze nie jest w pamięci,
+	// //    spróbuje wczytać synchronously (jeżeli CachedPlayerParty == nullptr), a w razie niepowodzenia
+	// //    zwróci pustą tablicę.
+	// UFUNCTION(BlueprintCallable, Category = "Party")
+	// TArray<ATBCPartyBase*> GetParties() const;
+	//
+	// // -----------------------
+	// // 4) (Opcjonalnie) jeżeli chcesz ładować asynchronicznie przy starcie gry:
+	// UFUNCTION(BlueprintCallable, Category = "Party")
+	// void LoadPartyDataAsync();
 	TArray<ATBCPartyBase*> GetParties() const;
 private:
 	class UAIPerceptionStimuliSourceComponent* StimulusSourceComponent;
 	void SetupStimulusSource();
+    void OnPartyDataLoaded();
 };
 

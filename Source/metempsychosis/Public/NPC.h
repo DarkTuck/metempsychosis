@@ -16,19 +16,27 @@ class METEMPSYCHOSIS_API ANPC : public ACharacter
 public:
 	// Sets default values for this character's properties
 	ANPC();
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TSubclassOf<UEnemiesToSpawn> Party;
+	//UPROPERTY()
+	//UEnemiesToSpawn* Party;
 	
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSoftObjectPtr<UEnemiesToSpawn> PartySubclass;
 private:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="AI",meta=(AllowPrivateAccess=true))
 	UBehaviorTree* BehaviorTree;
 
+	UPROPERTY()
+	UEnemiesToSpawn* CachedPartyAsset;
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="AI",meta=(AllowPrivateAccess=true))
 	APatrolPath* PatrolPath;
+	void LoadPartyAsset();
+	void OnPartyAssetLoaded();
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

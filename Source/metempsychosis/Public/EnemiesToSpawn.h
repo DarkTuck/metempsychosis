@@ -14,9 +14,19 @@ UCLASS()
 class METEMPSYCHOSIS_API UEnemiesToSpawn : public UPrimaryDataAsset
 {
 	GENERATED_BODY()
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<ATBCEnemyBase>> Enemies;
+
 public:
-	UFUNCTION(BlueprintCallable)
-	TArray<ATBCEnemyBase*> GetEnemies();
+	UPROPERTY(EditAnywhere)
+	TArray<TSoftClassPtr<ATBCEnemyBase>> Enemies;
+	virtual FPrimaryAssetId GetPrimaryAssetId() const override
+	{
+		return FPrimaryAssetId("EnemiesToSpawn", GetFName());
+	}
+	UFUNCTION(BlueprintCallable,Category="Data Async Load Helper")
+	void RequestAsyncLoad(const UObject* DataOwner);
+	UFUNCTION(BlueprintCallable,Category="Data Async Unload Helper")
+	void RequestAsyncUnload(const UObject* DataOwner);
+
+	UFUNCTION(BlueprintPure,Category="Data Async Getters")
+	TArray<ATBCEnemyBase*> GetEnemies() const;
 };
