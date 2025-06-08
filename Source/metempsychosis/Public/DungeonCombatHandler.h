@@ -13,8 +13,14 @@
  */
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartCombat);
 UCLASS()
-class METEMPSYCHOSIS_API UDungeonCombatHandler : public UObject
+class METEMPSYCHOSIS_API UDungeonCombatHandler : public UGameInstance
 {
+	/*This was meant to be only a static class used for easy communication between the dungeon and the fight
+	 *that derived from my misunderstanding of c++ after switching from c# and unity (Was aiming for singleton).
+	 *If my thinking is correct, this should be constructed and handled differently.
+	 * Now it is what it is, a probably bad and primitive save and communication system.
+	 * WHO NEEDS MEMORY ANYWAY, RIGHT?
+	 */ 
 	GENERATED_BODY()
 public:
 	UDungeonCombatHandler();
@@ -23,8 +29,10 @@ public:
 	static bool bIsPlayerAdvantage;
 	static void EndCombat(bool bPlayerWon);
 	static FString MapName;
-	static TArray<ATBCEnemyBase*> EniemiesParty;
+	static TArray<ATBCEnemyBase*> EnemiesParty;
 	static TArray<ATBCPartyBase*> Parties;
-protected:
+	//static TArray<uint8> OutSaveData;
+	TMap<int8,bool> NPCsSpawnMap;
+	void SetIndex(const int8 Index,const bool bValue);
 	static FVector PlayerSpawnLocation;
 };

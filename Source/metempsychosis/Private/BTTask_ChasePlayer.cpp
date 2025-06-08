@@ -28,8 +28,8 @@ EBTNodeResult::Type UBTTask_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& Own
 		if (auto const CharMove=NPC->GetCharacterMovement(); FVector::Distance(CharMove->GetLocation(),PlayerLocation)<=TriggerFightDistance)
 		{
 			const auto Anpc=Cast<ANPC>(Cont->GetPawn());
+			Anpc->disableOnSpawn=true;
 			UDungeonCombatHandler::StarCombat(false,Anpc->GetEnemiesToSpawn());
-			Anpc->Destroy();
 		}
 		//Move to player Location
 		UAIBlueprintHelperLibrary::SimpleMoveToLocation(Cont,PlayerLocation);

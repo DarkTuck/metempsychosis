@@ -3,7 +3,7 @@
 
 #include "PlayerParty.h"
 
-TArray<ATBCPartyBase*> UPlayerParty::GetParties()
+TArray<ATBCPartyBase*> UPlayerParty::GetParties() const
 {
 	TArray<ATBCPartyBase*> ReturnArray;
 	for (int8 i = 0; i < Parties.Num(); i++)

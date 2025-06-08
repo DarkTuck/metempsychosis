@@ -23,7 +23,7 @@ ATurnCombatGameMode::ATurnCombatGameMode()
 	PlayerControllerClass = ATBCPlayerController::StaticClass();
 }
 
-void ATurnCombatGameMode::TurnRequest(ACharacter* Character)
+void ATurnCombatGameMode::TurnRequest(ACharacter* const Character)
 {
 	TurnOrder.AddUnique(Character);
 	StartTurn();
@@ -70,7 +70,7 @@ void ATurnCombatGameMode::BeginPlay()
 	PartyMembers=UDungeonCombatHandler::Parties;
 	UE_LOG(LogTemp, Warning, TEXT("BeginPlay (GameMode): UDungeonCombatHandler::Parties.Num() = %d"), 
 	   UDungeonCombatHandler::Parties.Num());
-	EnemyCharacters=UDungeonCombatHandler::EniemiesParty;
+	EnemyCharacters=UDungeonCombatHandler::EnemiesParty;
 	bIsSomeonesTurn=false;
 	Super::BeginPlay();
 	Camera = UGameplayStatics::GetActorOfClass(this, ATopDownCamera::StaticClass());
@@ -92,7 +92,7 @@ void ATurnCombatGameMode::BeginPlay()
 	//END TEMP
 }
 
-void ATurnCombatGameMode::CharacterDies(const bool bIsParty, ACharacter* Character)
+void ATurnCombatGameMode::CharacterDies(const bool bIsParty, ACharacter* const Character)
 {
 	if (bIsParty)
 	{
@@ -111,6 +111,18 @@ void ATurnCombatGameMode::CharacterDies(const bool bIsParty, ACharacter* Charact
 		{
 			UDungeonCombatHandler::EndCombat(true);
 		}
+	}
+}
+
+void ATurnCombatGameMode::RegisterCharacter(ATBCBase* Character, const bool bIsParty)
+{
+	if (bIsParty)
+	{
+		PartyMembers.AddUnique(Cast<ATBCPartyBase>(Character));
+	}
+	else
+	{
+		EnemyCharacters.AddUnique(Cast<ATBCEnemyBase>(Character));
 	}
 }
 
@@ -272,7 +284,7 @@ void ATurnCombatGameMode::CreateTurnOrder()
 {
 	TurnOrder.Empty();
 	//find a player character to always start his turn before a party
-	ATBCPartyBase** PlayerCharacter = PartyMembers.FindByPredicate([](ATBCPartyBase* Character)
+	ATBCPartyBase** const PlayerCharacter = PartyMembers.FindByPredicate([](ATBCPartyBase* Character)
 	{
 		if (Character)
 		{
@@ -520,7 +532,7 @@ void ATurnCombatGameMode::CreateTurnOrder()
 // }
 
 
-void ATurnCombatGameMode::TurnOrderUpdate(ACharacter* Character)
+void ATurnCombatGameMode::TurnOrderUpdate(ACharacter* const Character)
 {
 	TurnOrder.Insert(Character, 0);
 }

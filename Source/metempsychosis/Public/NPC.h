@@ -46,5 +46,6 @@ public:
 	UBehaviorTree* GetBehaviorTree() const;
 	APatrolPath* GetPatrolPath() const;
 	TArray<ATBCEnemyBase*> GetEnemiesToSpawn() const;
+	bool disableOnSpawn=false;
 
 };

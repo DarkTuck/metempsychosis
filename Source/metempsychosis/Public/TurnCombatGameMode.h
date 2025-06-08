@@ -20,10 +20,11 @@ class METEMPSYCHOSIS_API ATurnCombatGameMode : public AGameModeBase
 	GENERATED_BODY()
 public:
 	ATurnCombatGameMode();
-	static void TurnRequest(ACharacter* Character);
+	static void TurnRequest(ACharacter* const Character);
 	static void StartTurn();
 	virtual void BeginPlay() override;
-	void CharacterDies(bool bIsParty,ACharacter* Character);
+	void CharacterDies(const bool bIsParty,ACharacter* const Character);
+	void RegisterCharacter(ATBCBase* Character,const bool bIsParty);
 	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")
 	TArray<ATBCPartyBase*>PartyMembers;
 	UPROPERTY(BlueprintReadOnly, Category = "TurnOrder")

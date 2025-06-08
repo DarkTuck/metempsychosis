@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "DungeonCombatHandler.h"
+#include "NPC.h"
 #include "GameFramework/Actor.h"
 #include "DungeonCombatActor.generated.h"
 UCLASS()
@@ -17,7 +19,12 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
+	//UPROPERTY()
+	//Map<int8,TSoftObjectPtr<ANPC>> NPCsMap;
+	UPROPERTY(EditAnywhere)
+	TArray<AActor*> Enemies;
+	UPROPERTY()
+	UDungeonCombatHandler* DungeonCombatHandler;
 
 public:	
 	// Called every frame
@@ -28,4 +35,7 @@ private:
 	
 	UFUNCTION()
 	void StartCombat();
+
+	void EnableEnemies();
+	void SaveEnemies() const;
 };

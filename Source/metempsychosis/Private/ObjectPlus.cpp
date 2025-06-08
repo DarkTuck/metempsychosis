@@ -4,7 +4,7 @@
 #include "Serialization/MemoryReader.h"
 #include "Misc/FileHelper.h"
 
-const FString UObjectPlus::EXTENT_NAME = TEXT("extent.sav");
+const FString UObjectPlus::EXTENT_NAME = FPaths::ProjectSavedDir() / TEXT("extent.sav");
 
 UObjectPlus::UObjectPlus()
 {
@@ -23,6 +23,7 @@ void UObjectPlus::SaveExtent()
     // Zapisz liczbę klas
     int32 ClassCount = GetExtent().Num();
     BinaryData << ClassCount;
+    UE_LOG(LogTemp, Log, TEXT("Class count: %i"), ClassCount);
 
     // Dla każdej klasy
     for (const auto& Pair : GetExtent())
@@ -30,11 +31,13 @@ void UObjectPlus::SaveExtent()
         // Zapisz nazwę klasy
         FString ClassName = Pair.Key->GetName();
         BinaryData << ClassName;
+        UE_LOG(LogTemp, Log, TEXT("Found class: %s"), *ClassName);
 
         // Zapisz obiekty
         const TArray<UObject*>& Objects = Pair.Value;
         int32 ObjectCount = Objects.Num();
         BinaryData << ObjectCount;
+        UE_LOG(LogTemp, Log, TEXT("Object count: %i"), ObjectCount);
 
         for (const UObject* Obj : Objects)
         {
@@ -42,6 +45,7 @@ void UObjectPlus::SaveExtent()
             {
                 FString ObjectName = Obj->GetName();
                 BinaryData << ObjectName;
+                UE_LOG(LogTemp, Log, TEXT("Found object of class %s with name %s"), *ClassName, *ObjectName);
             }
         }
     }
@@ -74,6 +78,7 @@ void UObjectPlus::LoadExtent()
     // Wczytaj liczbę klas
     int32 ClassCount;
     MemoryReader << ClassCount;
+    UE_LOG(LogTemp, Log, TEXT("Class count: %i"), ClassCount);
 
     // Dla każdej klasy
     for (int32 i = 0; i < ClassCount; ++i)
@@ -89,9 +94,12 @@ void UObjectPlus::LoadExtent()
             continue;
         }
 
+        UE_LOG(LogTemp, Log, TEXT("Found class: %s"), *ClassName);
+
         // Wczytaj obiekty
         int32 ObjectCount;
         MemoryReader << ObjectCount;
+        UE_LOG(LogTemp, Log, TEXT("Object count: %i"), ObjectCount);
 
         TArray<UObject*> Objects;
         for (int32 j = 0; j < ObjectCount; ++j)
@@ -104,6 +112,7 @@ void UObjectPlus::LoadExtent()
             {
                 CreatedObject->Rename(*ObjectName);
                 Objects.Add(CreatedObject);
+                UE_LOG(LogTemp, Log, TEXT("Created object of class %s with name %s"), *ClassName, *ObjectName);
             }
             else
             {
@@ -134,6 +143,7 @@ void UObjectPlus::RegisterObject(UObject* Obj)
     }
     // Dodajemy obiekt do wewnętrznej listy
     GetExtent()[Class].Add(Obj);
+    UE_LOG(LogTemp, Log, TEXT("Registered class %s"), *Obj->GetClass()->GetName());
 }
 
 void UObjectPlus::UnregisterObject(UObject* Obj)
@@ -145,6 +155,7 @@ void UObjectPlus::UnregisterObject(UObject* Obj)
     {
         Arr->Remove(Obj);
     }
+    UE_LOG(LogTemp, Log, TEXT("Unegistered class %s"), *Obj->GetClass()->GetName());
 }
 
 TArray<UObject*> UObjectPlus::GetExtentFromClassBP(UClass* Class)

@@ -12,7 +12,7 @@
 ABattlePosition::ABattlePosition()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
 	Arrow=CreateDefaultSubobject<UArrowComponent>(TEXT("Arrow"));
 	Arrow->SetupAttachment(RootComponent);
@@ -44,16 +44,14 @@ void ABattlePosition::SpawnCharacter()
 {
 	if (Character!=nullptr)
 	{
-		if (UWorld* const World=GetWorld())
-		{
 			FVector const SpawnLocation=GetActorLocation();
 			FRotator const SpawnRotation=GetActorRotation();
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
-
-			AActor* SpawnedCActor = World->SpawnActor<AActor>(Character,SpawnLocation,SpawnRotation,SpawnParams);
+			UWorld* const World = GetWorld();
+			AActor* const SpawnedCActor = World->SpawnActor<AActor>(Character,SpawnLocation,SpawnRotation,SpawnParams);
 			Cast<ATBCBase>(SpawnedCActor)->GetComponentByClass<UTurnCombatComponent>()->BattleTransform=GetActorTransform();
-		}
+			Cast<ATurnCombatGameMode>(UGameplayStatics::GetGameMode(World))->RegisterCharacter(Cast<ATBCBase>(SpawnedCActor),bIsEnemy);
 	}
 }
 

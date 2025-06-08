@@ -189,8 +189,7 @@ void UTurnCombatComponent::CloseAttack()
 	{
 		SwitchToAIController();
 	}
-	EPathFollowingRequestResult::Type Result = AIController->MoveToActor(Target, true);
-	if (Result == EPathFollowingRequestResult::RequestSuccessful)
+	if (const EPathFollowingRequestResult::Type Result = AIController->MoveToActor(Target, true); Result == EPathFollowingRequestResult::RequestSuccessful)
 	{
 		AIController->ReceiveMoveCompleted.AddDynamic(this, &UTurnCombatComponent::OnMoveToTargetCompleted);
 	}
@@ -221,7 +220,7 @@ void UTurnCombatComponent::RangeAttack()
 	PerformAttack();
 }
 
-void UTurnCombatComponent::OnMoveToTargetCompleted(FAIRequestID RequestID, EPathFollowingResult::Type Result)
+void UTurnCombatComponent::OnMoveToTargetCompleted(FAIRequestID RequestID, const EPathFollowingResult::Type Result)
 {
 	if (AIController)
 	{

@@ -17,9 +17,9 @@ class METEMPSYCHOSIS_API UPlayerParty : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere)
-	TArray<TSoftClassPtr<ATBCPartyBase>> Parties;
+	TArray<TSoftClassPtr<ATBCPartyBase>>  Parties;
 	UFUNCTION(BlueprintCallable)
-	TArray<ATBCPartyBase*> GetParties();
+	TArray<ATBCPartyBase*> GetParties() const;
 	virtual FPrimaryAssetId GetPrimaryAssetId() const override
 	{
 		return FPrimaryAssetId("PlayerParty", GetFName());
