@@ -19,12 +19,13 @@ ATBCBase::ATBCBase()
 
 int ATBCBase::CalculateDamage(const int Damage) const
 {
-	return Damage-DamageReduction;
+	return Damage-(DamageReduction+Defense);
 }
 
 void ATBCBase::GetDamaged(const int Damage)
 {
 	HP-=Damage;
+	Defense=0;
 	RefreshUI.Broadcast();
 	UE_LOG(LogTemp,Log,TEXT("CurentHP %d"),HP);
 	if (HP<=0)
@@ -42,6 +43,12 @@ void ATBCBase::SendAttackCommand(ACharacter* Target)
 	{
 		CombatComponent->AttackCommand(Target);
 	}
+}
+
+void ATBCBase::SendDefendCommand()
+{
+	Defense+=20;
+	CombatComponent->EndTurn();
 }
 
 // Called when the game starts or when spawned

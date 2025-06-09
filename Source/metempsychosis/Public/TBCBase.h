@@ -20,10 +20,10 @@ public:
 	bool bIsPlayer=false;
 	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
 	bool bIsEnemyCharacter=false;
-	int CalculateDamage(int Damage) const;
+	int CalculateDamage(const int Damage) const;
 	UPROPERTY(BlueprintReadWrite,Category="TBCBatlleStats",EditAnywhere)
 	int BaseDamage;
-	void GetDamaged(int Damage);
+	void GetDamaged(const int Damage);
 	UPROPERTY(BlueprintAssignable,Category="TBC")
 	FRefreshUI RefreshUI;
 protected:
@@ -39,11 +39,15 @@ protected:
 	int MP;
 	UPROPERTY(BlueprintReadWrite,Category="TBCStats",EditAnywhere)
 	int MaxMP;
+	UPROPERTY()
+	int Defense;
 
 	UPROPERTY(BlueprintReadWrite,Category="TBC",EditAnywhere)
 	UTurnCombatComponent* CombatComponent;
 	UFUNCTION(BlueprintCallable,Category="TBC")
 	void SendAttackCommand(ACharacter* Target);
+	UFUNCTION(BlueprintCallable,Category="TBC")
+	void SendDefendCommand();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
