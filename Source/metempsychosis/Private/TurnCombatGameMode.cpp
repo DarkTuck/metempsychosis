@@ -77,6 +77,29 @@ void ATurnCombatGameMode::BeginPlay()
 	UGameplayStatics::GetPlayerController(this, 0)->SetViewTargetWithBlend(Camera);
 	//HUD = Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))->UIWidget;
 	//Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))->OnHUDCreated.AddDynamic(this,&ATurnCombatGameMode::InitHUD);
+	int8 EnemyIndex=0;
+	int8 PlayerIndex=0;
+	for (int8 i = 0;i<SpawnPoints.Num();i++)
+	{
+		if (SpawnPoints[i]->bIsEnemy)
+		{
+			if (EnemyIndex<4)
+			{
+				SpawnPoints[i]->Character = EnemyCharacters[EnemyIndex]->GetClass();
+				EnemyIndex++;	
+			}
+
+		}
+		else
+		{
+			if (PlayerIndex<4)
+			{
+				SpawnPoints[i]->Character=PartyMembers[PlayerIndex]->GetClass();
+				PlayerIndex++;
+			}
+		}
+	}
+	SpawnActors.Broadcast();
 	if (ATBCPlayerController* PC = Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0)))
 	{
 		UE_LOG(LogTemp, Log, TEXT("trying to bind InitHUD"));
@@ -130,31 +153,6 @@ void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
 {
 	Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))->OnHUDCreated.RemoveDynamic(this,&ATurnCombatGameMode::InitHUD);
 	HUD=NewHUD;
-	//UGameplayStatics::GetAllActorsOfClass(this,ATBCPartyBase::StaticClass(),PartyMembers);
-	//GameplayStatics::GetAllActorsOfClass(this,ATBCEnemyBase::StaticClass(),EnemyCharacters);
-	int8 EnemyIndex=0;
-	int8 PlayerIndex=0;
-	for (int8 i = 0;i<SpawnPoints.Num();i++)
-	{
-		if (SpawnPoints[i]->bIsEnemy)
-		{
-			if (EnemyIndex<4)
-         	{
-         		SpawnPoints[i]->Character = EnemyCharacters[EnemyIndex]->GetClass();
-				EnemyIndex++;	
-         	}
-
-		}
-		else
-		{
-			if (PlayerIndex<4)
-			{
-				SpawnPoints[i]->Character=PartyMembers[PlayerIndex]->GetClass();
-                PlayerIndex++;
-			}
-		}
-	}
-	SpawnActors.Broadcast();
 	TArray<AActor*> TempPartyMembers;
 	TArray<AActor*> TempEnemies;
 	PartyMembers.Empty();
@@ -164,6 +162,7 @@ void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
 	for (AActor* const Character : TempPartyMembers)
 	{
 		PartyMembers.Add(Cast<ATBCPartyBase>(Character));
+		HUD->AddCharacter(Cast<ATBCBase>(Character));
 	}
 	for (AActor* const Character : TempEnemies)
 	{
@@ -175,102 +174,6 @@ void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
 	//	World->GetTimerManager().SetTimer(TimerHandle,this,&ATurnCombatGameMode::CreateTurnOrder,0.1f,false);
 	//;}
 }
-
-// void ATurnCombatGameMode::InitHUD(UUIwithEvents* NewHUD)
-// {
-//     // 0) Usuwamy delegata, żeby nie odpalać InitHUD ponownie
-//     Cast<ATBCPlayerController>(UGameplayStatics::GetPlayerController(this, 0))
-//         ->OnHUDCreated.RemoveDynamic(this, &ATurnCombatGameMode::InitHUD);
-//
-//     // 1) Zapisujemy wskaźnik do HUD-a
-//     HUD = NewHUD;
-//
-//     // 2) Logujemy raz rozmiary tablic, żeby było widać, czy cokolwiek w nich siedzi
-//     UE_LOG(LogTemp, Warning, TEXT("InitHUD: PartyMembers.Num() = %d; EnemyCharacters.Num() = %d"),
-//            PartyMembers.Num(), EnemyCharacters.Num());
-//
-//     // 3) Jeżeli obie tablice są puste, można wyjść wcześniej
-//     if (PartyMembers.Num() == 0 && EnemyCharacters.Num() == 0)
-//     {
-//         UE_LOG(LogTemp, Error, TEXT("InitHUD: obie tablice (PartyMembers i EnemyCharacters) są puste → wychodzę"));
-//         return;
-//     }
-//
-//     // 4) Przygotowujemy liczniki jako int8
-//     int8 EnemyIndex = 0;
-//     int8 PlayerIndex = 0;
-//
-//     // 5) Iterujemy po 8 potencjalnych spawn-pointach (zakładam, że masz dokładnie 8 elementów w SpawnPoints)
-//     for (int8 i = 0; i < 8; ++i)
-//     {
-//         // 5a) Sprawdźmy, czy SpawnPoints[i] jest poprawny
-//         if (!SpawnPoints.IsValidIndex(i) || SpawnPoints[i] == nullptr)
-//         {
-//             UE_LOG(LogTemp, Warning, TEXT("InitHUD: brak lub nullptr w SpawnPoints[%d], pomijam"), i);
-//             continue;
-//         }
-//
-//         // 5b) Jeżeli to spawn dla wroga:
-//         if (SpawnPoints[i]->bIsEnemy)
-//         {
-//             // Sprawdzamy, czy w EnemyCharacters jest coś pod indeksem EnemyIndex
-//             if (EnemyCharacters.IsValidIndex((int32)EnemyIndex) && EnemyCharacters[EnemyIndex] != nullptr)
-//             {
-//                 // Przypisujemy klasę instancji actora
-//                 SpawnPoints[i]->Character = EnemyCharacters[EnemyIndex]->GetClass();
-//                 UE_LOG(LogTemp, Log, TEXT("InitHUD: przypisano EnemyCharacters[%d] do SpawnPoints[%d] → %s"),
-//                        EnemyIndex, i, *EnemyCharacters[EnemyIndex]->GetName());
-//
-//                 // Zwiększamy licznik wrogów
-//                 EnemyIndex++;
-//             }
-//             else
-//             {
-//                 UE_LOG(LogTemp, Error, TEXT(
-//                     "InitHUD: brak kolejnego elementu w EnemyCharacters pod indeksem %d"),
-//                     EnemyIndex);
-//             }
-//         }
-//         else
-//         {
-//             // 5c) To jest spawn dla gracza
-//             if (PartyMembers.IsValidIndex((int32)PlayerIndex) && PartyMembers[PlayerIndex] != nullptr)
-//             {
-//                 // Przypisujemy klasę instancji aktora gracza
-//                 SpawnPoints[i]->Character = PartyMembers[PlayerIndex]->GetClass();
-//                 UE_LOG(LogTemp, Log, TEXT("InitHUD: przypisano PartyMembers[%d] do SpawnPoints[%d] → %s"),
-//                        PlayerIndex, i, *PartyMembers[PlayerIndex]->GetName());
-//
-//                 // Dodajemy instancję do HUD-a
-//                 ATBCBase* BasePawn = Cast<ATBCBase>(PartyMembers[PlayerIndex]);
-//                 if (BasePawn)
-//                 {
-//                     HUD->AddCharacter(BasePawn);
-//                     UE_LOG(LogTemp, Log, TEXT("InitHUD: HUD->AddCharacter dla PartyMembers[%d]"), PlayerIndex);
-//                 }
-//                 else
-//                 {
-//                     UE_LOG(LogTemp, Warning, TEXT(
-//                         "InitHUD: PartyMembers[%d] nie jest ATBCBase (nullptr po cast), pomijam dodanie do HUD"),
-//                         PlayerIndex);
-//                 }
-//
-//                 // Zwiększamy licznik graczy
-//                 PlayerIndex++;
-//             }
-//             else
-//             {
-//                 UE_LOG(LogTemp, Error, TEXT(
-//                     "InitHUD: brak kolejnego elementu w PartyMembers pod indeksem %d"),
-//                     PlayerIndex);
-//             }
-//         }
-//     }
-//
-//     // 6) Na końcu emitujemy event o spawnie i tworzymy kolejność tur
-//     SpawnActors.Broadcast();
-//   CreateTurnOrder();
-// }
 
 
 
@@ -335,201 +238,6 @@ void ATurnCombatGameMode::CreateTurnOrder()
 	StartTurn();
 }
 
-// void ATurnCombatGameMode::CreateTurnOrder()
-// {
-//     // 1) Wyczyśćmy starą kolejkę
-//     TurnOrder.Empty();
-//
-// 	// --- DODATKOWA DIAGNOSTYKA ---
-// 	UE_LOG(LogTemp, Warning, TEXT("CreateTurnOrder: wchodzę w funkcję, PartyMembers.Num() = %d"), PartyMembers.Num());
-// 	for (int32 idx = 0; idx < PartyMembers.Num(); ++idx)
-// 	{
-// 		ATBCPartyBase* Member = PartyMembers[idx];
-// 		if (Member)
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("  PartyMembers[%d] = %s"), idx, *Member->GetName());
-// 		}
-// 		else
-// 		{
-// 			UE_LOG(LogTemp, Warning, TEXT("  PartyMembers[%d] = nullptr"), idx);
-// 		}
-// 	}
-// 	// --------------------------------
-// 	
-//     // 2) Znajdźmy „głównego” gracza w PartyMembers (ten z bIsPlayer == true)
-// 	ATBCPartyBase* FoundPlayer = nullptr;
-// 	for (int8 i = 0; i < PartyMembers.Num(); ++i)
-// 	{
-// 		ATBCPartyBase* Member = PartyMembers[i];
-// 		if (Member)
-// 		{
-// 			if (ATBCBase* Party = Cast<ATBCBase>(Member))
-// 			{
-// 				if (Party->bIsPlayer)
-// 				{
-// 					FoundPlayer = Member;
-// 					UE_LOG(LogTemp, Log, TEXT("CreateTurnOrder: znaleziono głównego gracza: %s (PartyMembers[%d])"),
-// 						   *Party->GetName(), i);
-// 					break;
-// 				}
-// 			}
-// 		}
-// 	}
-//
-//     // 3) Jeżeli włączona jest przewaga gracza, to zaczynamy od gracza
-//     if (UDungeonCombatHandler::bIsPlayerAdvantage)
-//     {
-//         UE_LOG(LogTemp, Log, TEXT("CreateTurnOrder: Player is first"));
-//
-//         // 3a) Jeśli nie znaleźliśmy żadnego gracza, kończymy walkę
-//         if (!FoundPlayer)
-//         {
-//             UE_LOG(LogTemp, Error, TEXT("CreateTurnOrder: nie znaleziono głównego gracza → kończę Combat"));
-//             UDungeonCombatHandler::EndCombat(false);
-//             return;
-//         }
-//
-//         // 3b) Dodajmy najpierw „głównego” gracza
-//         {
-//             ACharacter* AsChar = Cast<ACharacter>(FoundPlayer);
-//             if (AsChar)
-//             {
-//                 TurnOrder.Add(AsChar);
-//                 UE_LOG(LogTemp, Log, TEXT("  → Dodano FoundPlayer: %s na pozycji 0"), *AsChar->GetName());
-//             }
-//             else
-//             {
-//                 UE_LOG(LogTemp, Error, TEXT("CreateTurnOrder: FoundPlayer nie jest ACharacter!"));
-//             }
-//         }
-//
-//         // 3c) Dodajemy pozostałych członków drużyny (wszyscy poza FoundPlayer)
-//         {
-//             int8 Index = 1;
-//             for (int8 i = 0; i < PartyMembers.Num(); ++i)
-//             {
-//                 ATBCPartyBase* Member = PartyMembers[i];
-//                 if (Member && Member != FoundPlayer)
-//                 {
-//                     ACharacter* AsChar = Cast<ACharacter>(Member);
-//                     if (AsChar)
-//                     {
-//                         TurnOrder.Add(AsChar);
-//                         UE_LOG(LogTemp, Log, TEXT("  → Dodano PartyMembers[%d] = %s na pozycji %d"),
-//                                i, *AsChar->GetName(), Index);
-//                         ++Index;
-//                     }
-//                     else
-//                     {
-//                         UE_LOG(LogTemp, Warning, TEXT("CreateTurnOrder: PartyMembers[%d] (%s) nie jest ACharacter, pomijam"),
-//                                i, *Member->GetName());
-//                     }
-//                 }
-//             }
-//         }
-//
-//         // 3d) Na końcu dorzućmy wrogów
-//         {
-//             int8 Index = TurnOrder.Num();
-//             for (int8 j = 0; j < EnemyCharacters.Num(); ++j)
-//             {
-//                 ATBCEnemyBase* Enemy = EnemyCharacters[j];
-//                 if (Enemy)
-//                 {
-//                     ACharacter* AsChar = Cast<ACharacter>(Enemy);
-//                     if (AsChar)
-//                     {
-//                         TurnOrder.Add(AsChar);
-//                         UE_LOG(LogTemp, Log, TEXT("  → Dodano EnemyCharacters[%d] = %s na pozycji %d"),
-//                                j, *AsChar->GetName(), Index);
-//                         ++Index;
-//                     }
-//                     else
-//                     {
-//                         UE_LOG(LogTemp, Warning, TEXT("CreateTurnOrder: EnemyCharacters[%d] (%s) nie jest ACharacter, pomijam"),
-//                                j, *Enemy->GetName());
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//     // 4) W przeciwnym razie – najpierw wrogowie, potem gracz, potem reszta drużyny
-//     else
-//     {
-//         UE_LOG(LogTemp, Warning, TEXT("CreateTurnOrder: Enemy is first"));
-//
-//         // 4a) Dodajemy najpierw wrogów
-//         {
-//             int8 Index = 0;
-//             for (int8 j = 0; j < EnemyCharacters.Num(); ++j)
-//             {
-//                 ATBCEnemyBase* Enemy = EnemyCharacters[j];
-//                 if (Enemy)
-//                 {
-//                     ACharacter* AsChar = Cast<ACharacter>(Enemy);
-//                     if (AsChar)
-//                     {
-//                         TurnOrder.Add(AsChar);
-//                         UE_LOG(LogTemp, Log, TEXT("  → Dodano EnemyCharacters[%d] = %s na pozycji %d"),
-//                                j, *AsChar->GetName(), Index);
-//                         ++Index;
-//                     }
-//                     else
-//                     {
-//                         UE_LOG(LogTemp, Warning, TEXT("CreateTurnOrder: EnemyCharacters[%d] (%s) nie jest ACharacter, pomijam"),
-//                                j, *Enemy->GetName());
-//                     }
-//                 }
-//             }
-//
-//             // 4b) Dodajemy „głównego” gracza zaraz po wrogach (jeśli istnieje)
-//             if (FoundPlayer)
-//             {
-//                 ACharacter* AsChar = Cast<ACharacter>(FoundPlayer);
-//                 if (AsChar)
-//                 {
-//                     TurnOrder.Add(AsChar);
-//                     UE_LOG(LogTemp, Log, TEXT("  → Dodano FoundPlayer: %s na pozycji %d"),
-//                            *AsChar->GetName(), Index);
-//                     ++Index;
-//                 }
-//                 else
-//                 {
-//                     UE_LOG(LogTemp, Error, TEXT("CreateTurnOrder: FoundPlayer nie jest ACharacter!"));
-//                 }
-//             }
-//             else
-//             {
-//                 UE_LOG(LogTemp, Warning, TEXT("CreateTurnOrder: brak FoundPlayer, pominąłem dodanie gracza"));
-//             }
-//
-//             // 4c) Dodajemy resztę drużyny (z wyłączeniem już dodanego FoundPlayer)
-//             for (int8 i = 0; i < PartyMembers.Num(); ++i)
-//             {
-//                 ATBCPartyBase* Member = PartyMembers[i];
-//                 if (Member && Member != FoundPlayer)
-//                 {
-//                     ACharacter* AsChar = Cast<ACharacter>(Member);
-//                     if (AsChar)
-//                     {
-//                         TurnOrder.Add(AsChar);
-//                         UE_LOG(LogTemp, Log, TEXT("  → Dodano PartyMembers[%d] = %s na pozycji %d"),
-//                                i, *AsChar->GetName(), Index);
-//                         ++Index;
-//                     }
-//                     else
-//                     {
-//                         UE_LOG(LogTemp, Warning, TEXT("CreateTurnOrder: PartyMembers[%d] (%s) nie jest ACharacter, pomijam"),
-//                                i, *Member->GetName());
-//                     }
-//                 }
-//             }
-//         }
-//     }
-//
-//     // 5) Startujemy turę
-//     StartTurn();
-// }
 
 
 void ATurnCombatGameMode::TurnOrderUpdate(ACharacter* const Character)
