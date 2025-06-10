@@ -19,7 +19,6 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	virtual void PostActorCreated() override;
 	void Interact() const;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
 	AActor* Target;

@@ -42,7 +42,7 @@ void ABattlePosition::BeginPlay()
 void ABattlePosition::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	Cast<ATurnCombatGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->SpawnActors.AddUObject(this,&ABattlePosition::SpawnCharacter);
+	//Cast<ATurnCombatGameMode>(UGameplayStatics::GetGameMode(GetWorld()))->SpawnActors.AddUObject(this,&ABattlePosition::SpawnCharacter);
 	//SpawnCharacter();
 }
 
