@@ -24,6 +24,12 @@ protected:
 	UInputAction* InteractAction;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
 	AActor* Target;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
+	FRotator selfRotation;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
+	float TargetYMultiplayer;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
+	float Alpha;
 	UPROPERTY()
 	bool bCouldInteract=false;
 
@@ -33,4 +39,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	UFUNCTION(BlueprintCallable, Category = "Lever")
+	void SetbCouldInteract(const bool bSet);
 };
