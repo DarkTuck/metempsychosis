@@ -11,7 +11,7 @@
 /**
  * 
  */
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartCombat);
+DECLARE_MULTICAST_DELEGATE(FOnStartCombat);
 UCLASS()
 class METEMPSYCHOSIS_API UDungeonCombatHandler : public UGameInstance
 {
@@ -31,6 +31,7 @@ public:
 	static FString MapName;
 	static TArray<ATBCEnemyBase*> EnemiesParty;
 	static TArray<ATBCPartyBase*> Parties;
+	static bool bCanStartCombat;
 	//static TArray<uint8> OutSaveData;
 	TMap<int8,bool> NPCsSpawnMap;
 	void SetIndex(const int8 Index,const bool bValue);

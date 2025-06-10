@@ -12,7 +12,7 @@ ADungeonCombatActor::ADungeonCombatActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	UDungeonCombatHandler::OnStartCombat.AddDynamic(this,&ADungeonCombatActor::StartCombat);
+	UDungeonCombatHandler::OnStartCombat.AddUObject(this,&ADungeonCombatActor::StartCombat);
 }
 
 // Called when the game starts or when spawned
@@ -45,6 +45,7 @@ void ADungeonCombatActor::StartCombat()
 			//save game
 		//}
 	//}
+	UDungeonCombatHandler::OnStartCombat.RemoveAll(this);
 	SaveEnemies();
 	UGameplayStatics::OpenLevel(GetWorld(), FName(BattleScene));
 	return GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, "Trigger Fight");
@@ -54,7 +55,7 @@ void ADungeonCombatActor::EnableEnemies()
 {
 	if (const TMap<int8,bool>& NPCsSpawnMap = DungeonCombatHandler->NPCsSpawnMap; NPCsSpawnMap.Num() == Enemies.Num())
 	{
-		UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->SetActorLocation(UDungeonCombatHandler::PlayerSpawnLocation);
+
 		for (int i = 0; i < NPCsSpawnMap.Num(); i++)
 		{
 			Enemies[i]->SetActorHiddenInGame(NPCsSpawnMap[i]);
@@ -68,6 +69,8 @@ void ADungeonCombatActor::EnableEnemies()
 		}
 	}
 	DungeonCombatHandler->NPCsSpawnMap.Empty();
+	UDungeonCombatHandler::bCanStartCombat = true;
+	//UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->SetActorLocation(UDungeonCombatHandler::PlayerSpawnLocation);
 }
 
 void ADungeonCombatActor::SaveEnemies() const
@@ -77,6 +80,15 @@ void ADungeonCombatActor::SaveEnemies() const
 		const ANPC* NPC = Cast<ANPC>(Enemies[i]);
 		UE_LOG(LogTemp, Log, TEXT("SaveEnemies: %s"), *NPC->GetName());
 		const bool bIsDisabled = NPC->disableOnSpawn;
-		DungeonCombatHandler->NPCsSpawnMap.Add(i, bIsDisabled);
+		if (DungeonCombatHandler)
+		{
+			if (!DungeonCombatHandler->NPCsSpawnMap.Contains(i))
+			{
+				DungeonCombatHandler->NPCsSpawnMap.Add(i, bIsDisabled);
+			}
+
+			//DungeonCombatHandler->NPCsSpawnMap.Add(i, bIsDisabled
+		}
+
 	}
 }

@@ -13,6 +13,7 @@ FVector UDungeonCombatHandler::PlayerSpawnLocation;
 FString UDungeonCombatHandler::MapName;
 TArray<ATBCEnemyBase*> UDungeonCombatHandler::EnemiesParty;
 TArray<ATBCPartyBase*> UDungeonCombatHandler::Parties;
+bool UDungeonCombatHandler::bCanStartCombat=true;
 //TArray<uint8> UDungeonCombatHandler::OutSaveData;
 //TMap<int8,bool> UDungeonCombatHandler::NPCsSpawnMap;
 //FVector UDungeonCombatHandler::PlayerLocation;
@@ -23,16 +24,22 @@ UDungeonCombatHandler::UDungeonCombatHandler()
 
 void UDungeonCombatHandler::StarCombat(const bool bIsPlayer, const TArray<ATBCEnemyBase*>& Party)
 {
-	bIsPlayerAdvantage=bIsPlayer;
-	const UObject* WorldContext=GEngine->GameViewport->GetWorld();
-	PlayerSpawnLocation = UGameplayStatics::GetPlayerCharacter(WorldContext,0)->GetActorLocation();
-	EnemiesParty=Party;
-	Parties=Cast<AmetempsychosisCharacter>(UGameplayStatics::GetPlayerCharacter(WorldContext,0))->GetParties();
-	OnStartCombat.Broadcast();
+	if (bCanStartCombat)
+	{
+		bCanStartCombat=false;
+		bIsPlayerAdvantage=bIsPlayer;
+		const UObject* WorldContext=GEngine->GameViewport->GetWorld();
+		PlayerSpawnLocation = UGameplayStatics::GetPlayerCharacter(WorldContext,0)->GetActorLocation();
+		EnemiesParty=Party;
+		Parties=Cast<AmetempsychosisCharacter>(UGameplayStatics::GetPlayerCharacter(WorldContext,0))->GetParties();
+		OnStartCombat.Broadcast();
+	}
 }
+
 
 void UDungeonCombatHandler::EndCombat(bool bPlayerWon)
 {
+	//bCanStartCombat=true;
 	UGameplayStatics::OpenLevel(GEngine->GameViewport->GetWorld(), FName(MapName));
 	//UTempSave* SaveGameInstance=Cast<UTempSave>(UGameplayStatics::LoadGameFromMemory(OutSaveData));
 	return GEngine->AddOnScreenDebugMessage(1, 5.f, FColor::Red, "BackToDungeon");
