@@ -32,6 +32,8 @@ protected:
 	float Alpha;
 	UPROPERTY()
 	bool bCouldInteract=false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
+	UStaticMeshComponent* LeverMesh;
 
 public:	
 	// Called every frame

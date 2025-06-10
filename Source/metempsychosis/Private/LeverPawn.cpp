@@ -9,6 +9,7 @@ ALeverPawn::ALeverPawn(): InteractAction(nullptr), Target(nullptr), selfRotation
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	
 }
 
 // Called when the game starts or when spawned
@@ -20,9 +21,11 @@ void ALeverPawn::BeginPlay()
 
 void ALeverPawn::Interact(const FInputActionInstance& Instance)
 {
+	UE_LOG(LogTemp, Log, TEXT("Interact"));
 	if (bCouldInteract)
 	{
-		SetActorRotation(FMath::Lerp(GetActorRotation(), selfRotation, Alpha));
+		//SetActorRotation(FMath::Lerp(GetActorRotation(), selfRotation, Alpha));
+		LeverMesh->SetRelativeRotation(FMath::Lerp(LeverMesh->GetRelativeRotation(), selfRotation, Alpha));
 		const FVector TargetLocation = Target->GetActorLocation();
 		Target->SetActorLocation(FMath::Lerp(TargetLocation,TargetLocation+FVector(0,TargetYMultiplayer,0) , Alpha));
 	}
