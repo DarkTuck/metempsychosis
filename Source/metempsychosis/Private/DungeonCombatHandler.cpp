@@ -46,6 +46,13 @@ void UDungeonCombatHandler::EndCombat(bool bPlayerWon)
 	
 }
 
+void UDungeonCombatHandler::StartGameInstance()
+{
+	Super::StartGameInstance();
+	bCanStartCombat=true;
+	PlayerSpawnLocation = UGameplayStatics::GetPlayerCharacter(GEngine->GameViewport->GetWorld(),0)->GetActorLocation();
+}
+
 void UDungeonCombatHandler::SetIndex(const int8 Index, const bool bValue)
 {
 	NPCsSpawnMap[Index]=bValue;

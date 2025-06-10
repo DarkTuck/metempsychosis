@@ -32,6 +32,7 @@ public:
 	static TArray<ATBCEnemyBase*> EnemiesParty;
 	static TArray<ATBCPartyBase*> Parties;
 	static bool bCanStartCombat;
+	virtual void StartGameInstance() override;
 	//static TArray<uint8> OutSaveData;
 	TMap<int8,bool> NPCsSpawnMap;
 	void SetIndex(const int8 Index,const bool bValue);

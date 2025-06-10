@@ -59,6 +59,17 @@ void ADungeonCombatActor::EnableEnemies()
 		for (int i = 0; i < NPCsSpawnMap.Num(); i++)
 		{
 			Enemies[i]->SetActorHiddenInGame(NPCsSpawnMap[i]);
+
+			// Disables collision components
+			Enemies[i]->SetActorEnableCollision(NPCsSpawnMap[i]);
+
+			// Stops the Actor from ticking
+			Enemies[i]->SetActorTickEnabled(NPCsSpawnMap[i]);
+			if (NPCsSpawnMap[i])
+			{
+				Enemies[i]->DisableComponentsSimulatePhysics();
+			}
+			Enemies[i]->SetActorLocation(FVector(0, 0, -1000));
 		}
 	}
 	else
@@ -70,7 +81,7 @@ void ADungeonCombatActor::EnableEnemies()
 	}
 	DungeonCombatHandler->NPCsSpawnMap.Empty();
 	UDungeonCombatHandler::bCanStartCombat = true;
-	//UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->SetActorLocation(UDungeonCombatHandler::PlayerSpawnLocation);
+	UGameplayStatics::GetPlayerCharacter(GetWorld(), 0)->SetActorLocation(UDungeonCombatHandler::PlayerSpawnLocation);
 }
 
 void ADungeonCombatActor::SaveEnemies() const

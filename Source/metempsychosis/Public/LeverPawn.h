@@ -21,7 +21,7 @@ protected:
 	virtual void BeginPlay() override;
 	void Interact() const;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
-	AActor* Target;
+	TArray<AActor*> Target;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
 	FRotator selfRotation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")

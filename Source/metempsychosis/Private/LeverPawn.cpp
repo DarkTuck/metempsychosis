@@ -6,7 +6,7 @@
 #include "metempsychosis/metempsychosisCharacter.h"
 
 // Sets default values
-ALeverPawn::ALeverPawn(): Target(nullptr), selfRotation(0, 0, 0), TargetYMultiplayer(0), Alpha(0), LeverMesh(nullptr)
+ALeverPawn::ALeverPawn(): selfRotation(0, 0, 0), TargetYMultiplayer(0), Alpha(0), LeverMesh(nullptr)
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
@@ -27,9 +27,14 @@ void ALeverPawn::Interact() const
 		//SetActorRotation(FMath::Lerp(GetActorRotation(), selfRotation, Alpha));
 		//LeverMesh->SetRelativeRotation(FMath::Lerp(LeverMesh->GetRelativeRotation(), selfRotation, Alpha));
 		LeverMesh->SetRelativeRotation(selfRotation);
-		const FVector TargetLocation = Target->GetActorLocation();
+		//const FVector TargetLocation = Target->GetActorLocation();
 		//Target->SetActorLocation(FMath::Lerp(TargetLocation,TargetLocation+FVector(0,TargetYMultiplayer,0) , Alpha));
-		Target->SetActorLocation(TargetLocation+FVector(TargetYMultiplayer,0,0));
+		//Target->SetActorLocation(TargetLocation+FVector(TargetYMultiplayer,0,0));
+		for (AActor* Actor : Target)
+		{
+			const FVector TargetLocation = Actor->GetActorLocation();
+			Actor->SetActorLocation(TargetLocation+FVector(TargetYMultiplayer,0,0));
+		}
 	}
 }
 
