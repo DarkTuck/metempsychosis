@@ -16,6 +16,7 @@ TArray<ACharacter*> ATurnCombatGameMode::TurnOrder;
 bool ATurnCombatGameMode::bIsSomeonesTurn = false;
 AActor* ATurnCombatGameMode::Camera = nullptr;
 UUIwithEvents* ATurnCombatGameMode::HUD = nullptr;
+SpawnActors ATurnCombatGameMode::SpawnActors;
 
 
 ATurnCombatGameMode::ATurnCombatGameMode()

@@ -20,6 +20,7 @@ public:
 	UClass* Character;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="BattlePosition",meta=(AllowPrivateAccess=true))
 	bool bIsEnemy;
+	virtual void BeginPlay() override;
 
 protected:
 	virtual void PostInitializeComponents() override;

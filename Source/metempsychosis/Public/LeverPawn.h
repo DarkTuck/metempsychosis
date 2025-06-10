@@ -19,9 +19,8 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	void Interact(const FInputActionInstance& Instance);
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
-	UInputAction* InteractAction;
+	virtual void PostActorCreated() override;
+	void Interact() const;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
 	AActor* Target;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Lever")
@@ -38,9 +37,6 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	UFUNCTION(BlueprintCallable, Category = "Lever")
 	void SetbCouldInteract(const bool bSet);
 };

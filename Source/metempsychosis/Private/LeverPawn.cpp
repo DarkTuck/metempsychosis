@@ -2,32 +2,34 @@
 
 
 #include "LeverPawn.h"
-#include "EnhancedInputComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "metempsychosis/metempsychosisCharacter.h"
 
 // Sets default values
-ALeverPawn::ALeverPawn(): InteractAction(nullptr), Target(nullptr), selfRotation(0,0,0), TargetYMultiplayer(0), Alpha(0)
+ALeverPawn::ALeverPawn(): Target(nullptr), selfRotation(0, 0, 0), TargetYMultiplayer(0), Alpha(0), LeverMesh(nullptr)
 {
 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	
 }
 
 // Called when the game starts or when spawned
 void ALeverPawn::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	Cast<AmetempsychosisCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))->InteractionDelegate.AddUObject(this, &ALeverPawn::Interact);	
 }
 
-void ALeverPawn::Interact(const FInputActionInstance& Instance)
+void ALeverPawn::Interact() const
 {
 	UE_LOG(LogTemp, Log, TEXT("Interact"));
 	if (bCouldInteract)
 	{
 		//SetActorRotation(FMath::Lerp(GetActorRotation(), selfRotation, Alpha));
-		LeverMesh->SetRelativeRotation(FMath::Lerp(LeverMesh->GetRelativeRotation(), selfRotation, Alpha));
+		//LeverMesh->SetRelativeRotation(FMath::Lerp(LeverMesh->GetRelativeRotation(), selfRotation, Alpha));
+		LeverMesh->SetRelativeRotation(selfRotation);
 		const FVector TargetLocation = Target->GetActorLocation();
-		Target->SetActorLocation(FMath::Lerp(TargetLocation,TargetLocation+FVector(0,TargetYMultiplayer,0) , Alpha));
+		//Target->SetActorLocation(FMath::Lerp(TargetLocation,TargetLocation+FVector(0,TargetYMultiplayer,0) , Alpha));
+		Target->SetActorLocation(TargetLocation+FVector(TargetYMultiplayer,0,0));
 	}
 }
 
@@ -39,13 +41,6 @@ void ALeverPawn::Tick(float DeltaTime)
 }
 
 // Called to bind functionality to input
-void ALeverPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &ALeverPawn::Interact);
-
-}
 
 void ALeverPawn::SetbCouldInteract(const bool bSet)
 {

@@ -33,6 +33,12 @@ void ABattlePosition::OnConstruction(const FTransform& Transform)
 	}
 }
 
+void ABattlePosition::BeginPlay()
+{
+	Super::BeginPlay();
+	ATurnCombatGameMode::SpawnActors.AddUObject(this,&ABattlePosition::SpawnCharacter);
+}
+
 void ABattlePosition::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();

@@ -33,7 +33,7 @@ public:
 	void InitHUD(UUIwithEvents* NewHUD);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "TurnOrder")
 	TArray<ABattlePosition*> SpawnPoints;
-	SpawnActors SpawnActors;
+	static SpawnActors SpawnActors;
 private:
 	static TArray<ACharacter*> TurnOrder;
 	static AActor* Camera;

@@ -97,6 +97,8 @@ void AmetempsychosisCharacter::SetupPlayerInputComponent(UInputComponent* Player
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AmetempsychosisCharacter::Look);
+
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AmetempsychosisCharacter::OnInteraction);
 	}
 	else
 	{
@@ -118,6 +120,12 @@ void AmetempsychosisCharacter::SetupStimulusSource()
 		StimulusSourceComponent->RegisterForSense(TSubclassOf<UAISense_Sight>());
 		StimulusSourceComponent->RegisterWithPerceptionSystem();
 	}
+}
+
+void AmetempsychosisCharacter::OnInteraction()
+{
+	UE_LOG(LogTemplateCharacter, Log, TEXT("InteractionBrodcast"));
+	InteractionDelegate.Broadcast();
 }
 
 void AmetempsychosisCharacter::Move(const FInputActionValue& Value)

@@ -15,12 +15,15 @@ class UInputAction;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
+DECLARE_MULTICAST_DELEGATE(FInteractionDelegate);
 
 UCLASS(config=Game)
 class AmetempsychosisCharacter : public ACharacter
 {
 	GENERATED_BODY()
+	
 
+	
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	USpringArmComponent* CameraBoom;
@@ -44,9 +47,12 @@ class AmetempsychosisCharacter : public ACharacter
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* LookAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InteractAction;
 
 public:
 	AmetempsychosisCharacter();
+	FInteractionDelegate InteractionDelegate;
 	
 
 protected:
@@ -97,6 +103,6 @@ public:
 private:
 	class UAIPerceptionStimuliSourceComponent* StimulusSourceComponent;
 	void SetupStimulusSource();
-    void OnPartyDataLoaded();
+	void OnInteraction();
 };
 
